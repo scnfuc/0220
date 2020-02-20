@@ -1,0 +1,100 @@
+﻿NOTE: “PROCEDURE PRINTTO”所用时间（总处理时间）:
+      实际时间          0.00 秒
+      CPU 时间          0.00 秒
+      
+
+5          OPTIONS LOCALE=zh_CN DFLANG=LOCALE VALIDVARNAME=ANY VALIDMEMNAME=EXTEND;
+6          
+7          OPTIONS NOSYNTAXCHECK;
+8          DATA _NULL_;
+9          RC=DLGCDIR('/r/ge.unx.sas.com/vol/vol120/u12/scnfuc/3.8中文测试');
+10         RUN;
+
+NOTE: The current working directory is now "/r/ge.unx.sas.com/vol/vol120/u12/scnfuc/3.8中文测试".
+NOTE: “DATA 语句”所用时间（总处理时间）:
+      实际时间          0.00 秒
+      CPU 时间          0.00 秒
+      
+
+11         OPTIONS NOSYNTAXCHECK;
+12         
+13         FILENAME _HTMLOUT %NRSTR("/r/ge.unx.sas.com/vol/vol120/u12/scnfuc/3.8中文测试/2312.html");
+14         
+15         FILENAME _GSFNAME TEMP;
+16         DATA _NULL_;
+17         CALL SYMPUT("GRAPHINIT","");
+18         CALL SYMPUT("GRAPHTERM","");
+19         RC=TSLVL('SASXGOPT','N');
+20         _ERROR_=0;
+21         IF (RC^=' ') THEN DO;
+22         CALL SYMPUT("GRAPHINIT","GOPTIONS RESET=ALL GSFNAME=_GSFNAME;");
+23         CALL SYMPUT("GRAPHTERM","GOPTIONS NOACCESSIBLE;");
+24         END;
+25         RUN;
+
+NOTE: “DATA 语句”所用时间（总处理时间）:
+      实际时间          0.00 秒
+      CPU 时间          0.01 秒
+      
+
+26         DATA _NULL_;
+27         RC=SYSPROD("PRODNUM002");
+28         IF (RC^=1) THEN DO;
+29         CALL SYMPUT("GRAPHINIT","");
+30         CALL SYMPUT("GRAPHTERM","");
+31         END;
+32         RUN;
+
+NOTE: “DATA 语句”所用时间（总处理时间）:
+      实际时间          0.00 秒
+2                                                            SAS 系统            2018年 9月21日 星期五 上午04时13分00秒
+
+      CPU 时间          0.00 秒
+      
+
+33         %LET SYSCC=0;
+34         %LET _CLIENTAPP='SAS Studio';
+35         %LET _CLIENTAPPABREV=Studio;
+36         %LET _CLIENTAPPVERSION=3.8;
+37         %LET _CLIENTVERSION=3.8;
+38         %LET _CLIENTMODE=background;
+39         %LET _SASSERVERNAME=%BQUOTE(cublax02.unx.sas.com);
+40         %LET _SASHOSTNAME=%BQUOTE();
+41         %LET _SASPROGRAMFILEHOST=%BQUOTE();
+42         %LET _CLIENTUSERID=%BQUOTE();
+43         %LET _CLIENTUSERNAME=%BQUOTE();
+44         %LET CLIENTMACHINE=%BQUOTE(VMWWIN10084.NA.SAS.COM);
+45         %LET _CLIENTMACHINE=%BQUOTE(VMWWIN10084.NA.SAS.COM);
+46         %let SASWORKLOCATION="%sysfunc(getoption(work))/";
+47         FILENAME _CWD '.';
+48         DATA _NULL_;
+49         CALL SYMPUT('_SASWORKINGDIR',PATHNAME('_CWD'));
+50         RUN;
+
+NOTE: “DATA 语句”所用时间（总处理时间）:
+      实际时间          0.00 秒
+      CPU 时间          0.00 秒
+      
+
+51         FILENAME _CWD;
+NOTE: 已取消文件引用名 _CWD 的分配。
+52         
+53         %LET _SASPROGRAMFILE = %NRQUOTE(%NRSTR(/r/ge.unx.sas.com/vol/vol120/u12/scnfuc/3.8中文测试/2312.sas));
+54         %LET _EXECENV=SASStudio Background;
+55         %LET _SASWS_ = %BQUOTE(/r/ge.unx.sas.com/vol/vol120/u12/scnfuc);
+56         %LET _SASWSTEMP_=%BQUOTE();
+57         ODS LISTING CLOSE;
+58         ODS AUTONAVIGATE OFF;
+59         ODS GRAPHICS ON;
+60         ODS HTML5 (ID=WEB) DEVICE=SVG GPATH="&_SASWSTEMP_" ENCODING=utf8 ACCESSIBLE_GRAPH  FILE=_HTMLOUT (TITLE='结果:
+60       ! 2312.sas') STYLE=Htmlblue OPTIONS(BITMAP_MODE='INLINE' OUTLINE='ON' SVG_MODE='INLINE'
+60       ! CSS_PREFIX='.ods_7eb4f977-59ac-4c17-81fb-f599c3f0697f' BODY_ID='div_7eb4f977-59ac-4c17-81fb-f599c3f0697f' );
+NOTE: 正在写入 HTML5(WEB) Body（主体）文件: _HTMLOUT
+61         &GRAPHINIT;
+62         OPTIONS FILELOCKS=( '/' FAIL );
+63         /*中文测试  */
+64         
+65         OPTIONS NOSYNTAXCHECK;
+66         &GRAPHTERM; ;*';*";*/;RUN;QUIT;
+67         ODS HTML5 (ID=WEB) CLOSE;
+68         

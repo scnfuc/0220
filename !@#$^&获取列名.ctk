@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Task schemaVersion="5.4">
+	<Registration>
+		<Name>GetColumns</Name>
+		<Description>Test ctm functionality for getColumns().  Added in 5.1 and 3.8 (JIRA - SASSTUDIO-2671).</Description>
+		<GUID></GUID>
+		<Procedures></Procedures>
+		<Version>3.8</Version>
+		<Links>
+			<Link href="http://www.sas.com">SAS Home page</Link>
+		</Links>
+	</Registration>
+
+	<Metadata>
+
+	    <DataSources>
+            <DataSource name="dsOne">
+                <Roles>
+                    <Role type="A" maxVars="1" order="true" minVars="1" name="VAR">Required variable:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+
+
+		<!--- Define the task options.             -->
+		<Options>
+			<Option name="DATATAB" inputType="string">DATA</Option>
+			<Option name="DATAGROUP" inputType="string">DATA</Option>
+            
+            <Option inputType="string" name="infoText" width="100%">
+                The columns for the selected data are returned in the code. </Option>
+            <Option inputType="string" name="infoText2" width="100%">
+                Test with standard data, validvarname=ANY, validmemname=extend, views, anything else?
+            </Option> 
+            <Option defaultValue="1" inputType="checkbox" name="EnableDataSource">Enable/Disable Data Source</Option>
+		</Options>
+	</Metadata>
+
+	<!--- Define the UI for task options                         -->
+	<UI>
+        <Container option="DATATAB">
+            <Group option="DATAGROUP" open="true">
+                <OptionItem option="infoText"/>
+                <OptionItem option="infoText2"/>
+                <OptionItem option="EnableDataSource"/>
+                <DataItem data="dsOne"/>
+            </Group>
+        </Container>
+	</UI>
+
+	<!--- Define the task dependencies.             -->
+	<Dependencies> 
+	  <Dependency condition="$EnableDataSource == '1'">
+        <Target action="enable" conditionResult="true" option="dsOne"/>
+        <Target action="disable" conditionResult="false" option="dsOne"/>
+      </Dependency>
+	</Dependencies>
+
+	<!--- Define the velocity code template.        -->
+	<CodeTemplate>
+		<![CDATA[
+Show the columns for the selected data:
+
+#if ($dsOne.getColumns())
+Columns for $dsOne: $dsOne.getColumns()
+#else
+Columns for $dsOne: null
+#end
+
+
+
+		]]>
+	</CodeTemplate>
+
+<TemplateValues version="3.8">
+<![CDATA[
+{"infoText":"The columns for the selected data are returned in the code.","infoText2":"Test with standard data, validvarname=ANY, validmemname=extend, views, anything else?","dsOne":{"librarytable":"HPS.I18N.CARSSASHELP_ZH"},"sasVersion":"9.46","VAR":"","EnableDataSource":"1","DATATAB":"DATA","DATAGROUP":"DATA","sasOS":"Linux LIN X64 3.10.0-327.13.1.el7.x86_64"}
+]]>
+</TemplateValues>
+</Task>
