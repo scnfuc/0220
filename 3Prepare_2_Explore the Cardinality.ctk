@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="6.2">
+    <Registration>
+        <Name>Summary</Name>
+        <Description>The Summary task computes level and descriptive statistics for variables in a data table.</Description>
+        <GUID>7fa29743-60da-4f6e-b0df-a68950db922a</GUID>
+        <Procedures>CARDINALITY</Procedures>
+        <Version>4.2</Version>
+        <Links>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=ancmn_cardinality&amp;locale=en">The CARDINALITY Procedure</Link>
+            <Link href="http://support.sas.com/training/tutorial/viya/index.html">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource libraryEngineInclude="CAS" name="dataset" where="true">
+                <Roles>
+                    <Role exclude="freqVariable" indent="1" minVars="1"
+                        name="vars" type="A">Variables:</Role>
+                    <Role exclude="freqVariable" indent="1" minVars="1"
+                        name="vars2" type="A">Variables:</Role>
+                    <Role exclude="vars" maxVars="1" minVars="0"
+                        name="freqVariable" type="N">Frequency count:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="optionsTab">OPTIONS</Option>
+            <Option inputType="string" name="dataGroup">DATA</Option>
+            <Option inputType="string" name="rolesGroup">ROLES</Option>
+            <Option inputType="string" name="otherRolesGroup">ADDITIONAL ROLES</Option>
+            <Option defaultValue="1" inputType="radio" name="varsALL" variable="varsRadio">Summarize all variables</Option>
+            <Option inputType="radio" name="varsSELECT" variable="varsRadio">Select variables to summarize</Option>
+            <Option inputType="string" name="optionsGroup">METHODS</Option>
+            <Option indent="0" inputType="string" name="maxlevelsLabel">Maximum levels to report per variable:</Option>
+            <Option defaultValue="1" indent="0" inputType="radio"
+                name="maxlevelsRadioDefault" variable="maxlevelsRadio">Use 20 (default)</Option>
+            <Option defaultValue="0" indent="0" inputType="radio"
+                name="maxlevelsRadioCustom" variable="maxlevelsRadio">Use custom value</Option>
+            <Option decimalPlaces="0" defaultValue="20" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer greater than or equal to 10 and less than 255 for the maximum levels"
+                maxValue="254" minValue="10"
+                missingMessage="Enter an integer greater than or equal to 10 and less than 255 for the maximum levels"
+                name="MAXLEVELS"
+                promptMessage="Enter an integer greater than or equal to 10 and less than 255 for the maximum levels"
+                rangeMessage="Enter an integer greater than or equal to 10 and less than 255 for the maximum levels"
+                required="true" width="100px">Maximum levels:</Option>
+            <Option defaultValue="orderASC" inputType="combobox" name="orderCombo">Order of levels:</Option>
+            <Option inputType="string" name="orderASC" returnValue="asc">Ascending (default)</Option>
+            <Option inputType="string" name="orderDESC" returnValue="desc">Descending</Option>
+            <Option inputType="string" name="orderASCFORMAT" returnValue="ascfmt">Ascending formatted</Option>
+            <Option inputType="string" name="orderDESCFORMAT" returnValue="desfmt">Descending formatted</Option>
+            <Option inputType="string" name="statisticsGroup">STATISTICS</Option>
+            <Option defaultValue="defaultStats" inputType="combobox" name="selectStatCombo">Select statistics to display:</Option>
+            <Option inputType="string" name="defaultStats">Default statistics</Option>
+            <Option inputType="string" name="selectedStats">Selected statistics</Option>
+            <Option inputType="string" name="allStats">All statistics</Option>
+            <Option inputType="string" name="statVarGroup">Variable Attributes</Option>
+            <Option inputType="string" name="statCardinalityGroup">Cardinality</Option>
+            <Option inputType="string" name="statDescGroup">Descriptive Statistics</Option>
+            <Option inputType="string" name="statTop1Group">Most Frequent Level</Option>
+            <Option inputType="string" name="statLastGroup">Last Seen Level</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_FMTWIDTH_">Width of the variable formatted value</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_TYPE_">Type of the raw values</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_RLEVEL_">Recommended level</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_ORDER_">Variable sort order</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_MORE_">Have more unreported levels</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_CARDINALITY_">Number of levels</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_NOBS_">Number of observations</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_SUMFREQS_">Total summation of frequencies</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_NMISS_">Number of missing values</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_MISSFMT_">Format of the missing value</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_VISIBLE_">Percentage of the visible part of the report</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_MIN_">Minimum numeric value</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_MAX_">Maximum numeric value</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_MEAN_">Mean</Option>
+            <Option defaultValue="1" inputType="checkbox" name="show_STDDEV_">Standard deviation</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_SKEWNESS_">Skewness</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_KURTOSIS_">Kurtosis</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_MFREQ_">Maximum frequency</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_MFREQFOUNDLEVEL_">Found maximum frequency in the visible part of the report</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_MFREQNUM_">Numeric level with the maximum frequency</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_MFREQCHR_">Character level with the maximum frequency</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_MFREQCFMT_">Formatted level with the maximum frequency</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_LASTNUM_">Last raw numeric value (cutoff)</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_LASTCHR_">Last raw character value (cutoff)</Option>
+            <Option defaultValue="0" inputType="checkbox" name="show_LASTCFMT_">Last formatted value (cutoff)</Option>
+            <Option inputType="string" name="outListingGroup">LISTINGS</Option>
+            <Option inputType="string" name="summaryOutGroup">Variable Summary</Option>
+            <Option inputType="string" name="detailOutGroup">Level Details</Option>
+            <Option defaultValue="0" inputType="checkbox" name="showSummary">Show variables summary</Option>
+            <Option defaultValue="showAllSummaryChoice" indent="0"
+                inputType="combobox" name="showSummaryCombo">Show:</Option>
+            <Option inputType="string" name="showSubsetSummaryChoice">Show subset of variable summary</Option>
+            <Option inputType="string" name="showAllSummaryChoice">Show all</Option>
+            <Option decimalPlaces="0" defaultValue="10" increment="10"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 and less than 9999 for the number of observations to be shown"
+                maxValue="9998" minValue="1"
+                missingMessage="Enter an integer greater than 0 and less than 9999 for the number of observations to be shown"
+                name="subsetSummaryNobs"
+                promptMessage="Enter an integer greater than 0 and less than 9999 for the number of observations to be shown"
+                rangeMessage="Enter an integer greater than 0 and less than 9999 for the number of observations to be shown" required="true">Number of variables to show:</Option>
+            <Option defaultValue="0" inputType="checkbox" name="showDetail">Show levels</Option>
+            <Option defaultValue="showSubsetDetailChoice" indent="0"
+                inputType="combobox" name="showDetailCombo">Show:</Option>
+            <Option inputType="string" name="showSubsetDetailChoice">Show subset of levels</Option>
+            <Option inputType="string" name="showAllDetailChoice">Show all levels</Option>
+            <Option inputType="string" name="showAllVarsDetailChoice">Show all levels of specified variables</Option>
+            <Option decimalPlaces="0" defaultValue="20" increment="10"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 and less than 9999 for the number of observations to be shown"
+                maxValue="9998" minValue="1"
+                missingMessage="Enter an integer greater than 0 and less than 9999 for the number of observations to be shown"
+                name="subsetDetailNobs"
+                promptMessage="Enter an integer greater than 0 and less than 9999 for the number of observations to be shown"
+                rangeMessage="Enter an integer greater than 0 and less than 9999 for the number of observations to be shown" required="true">Number of levels to show:</Option>
+            <Option indent="1" inputType="select" multiple="true"
+                name="varsToShow" required="true" sourceLink="vars">Select variables:</Option>
+            <Option inputType="string" name="outputTab">OUTPUT</Option>
+            <Option inputType="string" name="outputGroup">OUTPUT DATA</Option>
+            <Option inputType="string" name="casOutputLibrefNote">The following tables must use a CAS engine libref:</Option>
+            <Option defaultValue="0" inputType="checkbox" name="outputSummaryDS">Create variable summary output table</Option>
+            <Option indent="1" inputType="outputdata"
+                libraryEngineInclude="CAS" name="outputSummaryDSName" required="true">Specify a CAS table:</Option>
+            <Option defaultValue="0" inputType="checkbox" name="outputDetailDS">Create levels detail output table</Option>
+            <Option indent="1" inputType="outputdata"
+                libraryEngineInclude="CAS" name="outputDetailDSName" required="true">Specify a CAS table:</Option>
+            <Option inputType="string" name="VariableSummary">Variable Summary</Option>
+            <Option inputType="string" name="LevelDetails">Level Details</Option>
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="rolesGroup">
+                <OptionItem option="varsALL"/>
+                <OptionItem option="varsSELECT"/>
+                <RoleItem role="vars"/>
+            </Group>
+            <Group option="otherRolesGroup">
+                <RoleItem role="freqVariable"/>
+            </Group>
+        </Container>
+        <Container option="optionsTab">
+            <Group open="true" option="optionsGroup">
+                <OptionItem option="maxlevelsLabel"/>
+                <OptionItem option="maxlevelsRadioDefault"/>
+                <OptionItem option="maxlevelsRadioCustom"/>
+                <OptionItem option="MAXLEVELS"/>
+                <OptionChoice option="orderCombo">
+                    <OptionItem option="orderASC"/>
+                    <OptionItem option="orderDESC"/>
+                    <OptionItem option="orderASCFORMAT"/>
+                    <OptionItem option="orderDESCFORMAT"/>
+                </OptionChoice>
+            </Group>
+            <Group open="true" option="statisticsGroup">
+                <OptionChoice option="selectStatCombo">
+                    <OptionItem option="defaultStats"/>
+                    <OptionItem option="selectedStats"/>
+                    <OptionItem option="allStats"/>
+                </OptionChoice>
+                <Group open="true" option="statVarGroup">
+                    <OptionItem option="show_FMTWIDTH_"/>
+                    <OptionItem option="show_TYPE_"/>
+                </Group>
+                <Group open="true" option="statCardinalityGroup">
+                    <OptionItem option="show_RLEVEL_"/>
+                    <OptionItem option="show_ORDER_"/>
+                    <OptionItem option="show_MORE_"/>
+                    <OptionItem option="show_CARDINALITY_"/>
+                    <OptionItem option="show_NOBS_"/>
+                    <OptionItem option="show_SUMFREQS_"/>
+                    <OptionItem option="show_NMISS_"/>
+                    <OptionItem option="show_MISSFMT_"/>
+                    <OptionItem option="show_VISIBLE_"/>
+                </Group>
+                <Group open="true" option="statDescGroup">
+                    <OptionItem option="show_MIN_"/>
+                    <OptionItem option="show_MAX_"/>
+                    <OptionItem option="show_MEAN_"/>
+                    <OptionItem option="show_STDDEV_"/>
+                    <OptionItem option="show_SKEWNESS_"/>
+                    <OptionItem option="show_KURTOSIS_"/>
+                </Group>
+                <Group open="false" option="statTop1Group">
+                    <OptionItem option="show_MFREQ_"/>
+                    <OptionItem option="show_MFREQFOUNDLEVEL_"/>
+                    <OptionItem option="show_MFREQNUM_"/>
+                    <OptionItem option="show_MFREQCHR_"/>
+                    <OptionItem option="show_MFREQCFMT_"/>
+                </Group>
+                <Group open="false" option="statLastGroup">
+                    <OptionItem option="show_LASTNUM_"/>
+                    <OptionItem option="show_LASTCHR_"/>
+                    <OptionItem option="show_LASTCFMT_"/>
+                </Group>
+            </Group>
+            <Group open="true" option="outListingGroup">
+                <Group open="true" option="summaryOutGroup">
+                    <OptionChoice option="showSummaryCombo">
+                        <OptionItem option="showSubsetSummaryChoice"/>
+                        <OptionItem option="showAllSummaryChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="subsetSummaryNobs"/>
+                </Group>
+                <Group open="true" option="detailOutGroup">
+                    <OptionChoice option="showDetailCombo">
+                        <OptionItem option="showSubsetDetailChoice"/>
+                        <OptionItem option="showAllDetailChoice"/>
+                        <OptionItem option="showAllVarsDetailChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="subsetDetailNobs"/>
+                    <OptionItem option="varsToShow"/>
+                    <RoleItem role="vars2"/>
+                </Group>
+            </Group>
+        </Container>
+        <Container option="outputTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="casOutputLibrefNote"/>
+                <OptionItem option="outputSummaryDS"/>
+                <OptionItem option="outputSummaryDSName"/>
+                <OptionItem option="outputDetailDS"/>
+                <OptionItem option="outputDetailDSName"/>
+            </Group>
+        </Container>
+    </UI>
+    <Dependencies>
+        <Dependency condition="$varsRadio.equalsIgnoreCase('varsSELECT')">
+            <Target action="show" conditionResult="true" option="vars"/>
+            <Target action="hide" conditionResult="false" option="vars"/>
+        </Dependency>
+        <Dependency condition="($maxlevelsRadio.equalsIgnoreCase('maxlevelsRadioCustom'))">
+            <Target action="show" conditionResult="true" option="MAXLEVELS"/>
+            <Target action="hide" conditionResult="false" option="MAXLEVELS"/>
+        </Dependency>
+        <Dependency condition="($selectStatCombo=='selectedStats')">
+            <Target action="show" conditionResult="true" option="statVarGroup"/>
+            <Target action="hide" conditionResult="false" option="statVarGroup"/>
+            <Target action="show" conditionResult="true" option="statCardinalityGroup"/>
+            <Target action="hide" conditionResult="false" option="statCardinalityGroup"/>
+            <Target action="show" conditionResult="true" option="statDescGroup"/>
+            <Target action="hide" conditionResult="false" option="statDescGroup"/>
+            <Target action="show" conditionResult="true" option="statTop1Group"/>
+            <Target action="hide" conditionResult="false" option="statTop1Group"/>
+            <Target action="show" conditionResult="true" option="statLastGroup"/>
+            <Target action="hide" conditionResult="false" option="statLastGroup"/>
+        </Dependency>
+        <Dependency condition="($outputSummaryDS==1)">
+            <Target action="enable" conditionResult="true" option="outputSummaryDSName"/>
+            <Target action="disable" conditionResult="false" option="outputSummaryDSName"/>
+        </Dependency>
+        <Dependency condition="($showSummaryCombo == 'showSubsetSummaryChoice')">
+            <Target action="show" conditionResult="true" option="subsetSummaryNobs"/>
+            <Target action="hide" conditionResult="false" option="subsetSummaryNobs"/>
+        </Dependency>
+        <Dependency condition="($outputDetailDS==1)">
+            <Target action="enable" conditionResult="true" option="outputDetailDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDetailDSName"/>
+        </Dependency>
+        <Dependency condition="($showDetailCombo == 'showSubsetDetailChoice')">
+            <Target action="show" conditionResult="true" option="subsetDetailNobs"/>
+            <Target action="hide" conditionResult="false" option="subsetDetailNobs"/>
+        </Dependency>
+        <Dependency condition="($showDetailCombo == 'showAllVarsDetailChoice') &amp;&amp; $varsRadio.equalsIgnoreCase('varsSELECT')">
+            <Target action="show" conditionResult="true" option="varsToShow"/>
+            <Target action="hide" conditionResult="false" option="varsToShow"/>
+        </Dependency>
+        <Dependency condition="($showDetailCombo == 'showAllVarsDetailChoice') &amp;&amp; $varsRadio.equalsIgnoreCase('varsALL')">
+            <Target action="show" conditionResult="true" option="vars2"/>
+            <Target action="hide" conditionResult="false" option="vars2"/>
+        </Dependency>
+    </Dependencies>
+    <Requirements>
+        <Requirement condition="!($outputSummaryDSName &amp;&amp; $outputSummaryDSName != '' &amp;&amp;      ($outputSummaryDSName.indexOf('.') > 0 &amp;&amp; $outputSummaryDSName.toUpperCase().substring(0,$outputSummaryDSName.indexOf('.')) == 'WORK'))">
+            <Message nlsKey="outputSummaryDSNameMsgKey">The variable summary table must have a two-level name that includes a CAS engine libref.</Message>
+        </Requirement>
+        <Requirement condition="!($outputDetailDSName &amp;&amp; $outputDetailDSName != '' &amp;&amp;      ($outputDetailDSName.indexOf('.') > 0 &amp;&amp; $outputDetailDSName.toUpperCase().substring(0,$outputDetailDSName.indexOf('.')) == 'WORK'))">
+            <Message nlsKey="outputDetailDSNameMsgKey">The level detail table must have a two-level name that includes a CAS engine libref.</Message>
+        </Requirement>
+        <Requirement condition="!($outputSummaryDSName &amp;&amp; $outputSummaryDSName != '' &amp;&amp;              $outputDetailDSName &amp;&amp; $outputDetailDSName != '' &amp;&amp;              $outputSummaryDSName.equalsIgnoreCase($outputDetailDSName))">
+            <Message nlsKey="outputDSNameCollisionMsgKey">The names of the variable summary and levels detail output tables must be different.</Message>
+        </Requirement>
+    </Requirements>
+    <CodeTemplate><![CDATA[
+ods noproctitle;
+
+### libname of the input dataset
+#set ($index = $dataset.toString().indexOf('.'))
+#set ($inLib = $dataset.toString().substring(0,$index))
+
+### Selected columns to print
+#set($varListToShowStmt="
+  #if($selectStatCombo=='defaultStats')
+      var _varname_ _fmtwidth_ _type_ _rlevel_ _more_ _cardinality_ _nmiss_ _min_ _max_ _mean_ _stddev_;
+  #elseif($selectStatCombo=='selectedStats')
+      var _varname_ 
+	#if($show_FMTWIDTH_=='1') _fmtwidth_ #end
+	#if($show_TYPE_=='1') _type_ #end
+	#if($show_RLEVEL_=='1') _rlevel_ #end
+	#if($show_ORDER_=='1') _order_ #end
+	#if($show_MORE_=='1') _more_ #end
+	#if($show_CARDINALITY_=='1') _cardinality_ #end
+	#if($show_NOBS_=='1') _nobs_ #end
+	#if($show_SUMFREQS_=='1') _sumfreqs_ #end
+	#if($show_NMISS_=='1') _nmiss_ #end
+	#if($show_MISSFMT_=='1') _missfmt_ #end
+	#if($show_VISIBLE_=='1') _visible_ #end
+	#if($show_MIN_=='1') _min_ #end
+	#if($show_MAX_=='1') _max_ #end
+	#if($show_MEAN_=='1') _mean_ #end
+	#if($show_STDDEV_=='1') _stddev_ #end
+	#if($show_SKEWNESS_=='1') _skewness_ #end
+	#if($show_KURTOSIS_=='1') _kurtosis_ #end
+	#if($show_MFREQ_=='1') _mfreq_ #end
+	#if($show_MFREQFOUNDLEVEL_=='1') _mfreqfoundlevel_ #end
+	#if($show_MFREQNUM_=='1') _mfreqnum_ #end
+	#if($show_MFREQCHR_=='1') _mfreqchr_ #end
+	#if($show_MFREQCFMT_=='1') _mfreqcfmt_ #end
+	#if($show_LASTNUM_=='1') _lastnum_ #end
+	#if($show_LASTCHR_=='1') _lastchr_ #end
+	#if($show_LASTCFMT_=='1') _lastcfmt_ #end
+	;
+  #end
+")
+
+
+### Which option to get the list of variables to show their levels
+#set($levelVars="#if($varsRadio.equalsIgnoreCase('varsSELECT'))#foreach($item in $varsToShow)'$item' #end#{else}#foreach($item in $vars2)'$item' #end#end")
+ 
+proc cardinality
+
+data=$dataset#if($dataset.getWhereClause()!='') (where=($dataset.getWhereClause()))#end
+
+### options
+
+#if($MAXLEVELS) maxlevels = $MAXLEVELS #end
+
+#if($ignoreUserFormats && $ignoreUserFormats == '1') nouserformats #end
+
+#if($orderCombo != "asc") order = $orderCombo#end
+
+### output card option
+outcard=#if($outputSummaryDS==1)$outputSummaryDSName#{else}${inLib}.varSummaryTemp #end
+
+### output option
+out=#if ($outputDetailDS==1)$outputDetailDSName#{else}${inLib}.levelDetailTemp #end
+;
+
+### vars stmt
+#if($varsRadio.equalsIgnoreCase('varsSELECT'))
+    vars #foreach( $item in $vars ) $item #end;
+#end
+
+### Freq stmt
+#if( $freqVariable.size() > 0 )
+    freq #foreach( $item in $freqVariable ) $item #end;
+#end
+run;
+
+
+### Summary table display options
+    proc print data=#if($outputSummaryDS==1)$outputSummaryDSName#{else}${inLib}.varSummaryTemp #end#if($showSummaryCombo == 'showSubsetSummaryChoice')(obs=$subsetSummaryNobs)#end label;
+        $varListToShowStmt
+        title $CTMUtil.quoteString($VariableSummary);
+	run;
+
+
+### Detail table display options
+    proc print data=#if($outputDetailDS==1)$outputDetailDSName#{else}${inLib}.levelDetailTemp #end#if($showDetailCombo == 'showSubsetDetailChoice')(obs=$subsetDetailNobs)#end#if($showDetailCombo == 'showAllVarsDetailChoice' && $levelVars != "")(where=(_varname_ in ($levelVars)))#end label;
+        title $CTMUtil.quoteString($LevelDetails);
+	run;
+	
+### Delete temporary tables
+#if ($outputSummaryDS!=1 || $outputDetailDS!=1)
+proc delete data=#if($outputSummaryDS!=1)${inLib}.varSummaryTemp#end #if($outputDetailDS!=1)${inLib}.levelDetailTemp#end;
+run;
+#end
+]]></CodeTemplate>
+    <TemplateValues version="4.2"><![CDATA[
+{"show_LASTCFMT_":"0","showSummary":"0","statCardinalityGroup":"Cardinality","subsetSummaryNobs":"10","show_NMISS_":"1","show_VISIBLE_":"0","VariableSummary":"Variable Summary","showAllSummaryChoice":"Show all","show_MFREQFOUNDLEVEL_":"0","maxlevelsLabel":"Maximum levels to report per variable:","sasOS":"Linux LIN X64 4.1.12-61.1.22.el7uek.x86_64","show_STDDEV_":"1","outputDetailDS":"0","dataTab":"DATA","show_MFREQNUM_":"0","selectStatCombo":"defaultStats","show_MIN_":"1","show_MEAN_":"1","orderASCFORMAT":"Ascending formatted","show_MORE_":"1","vars":"","varsSELECT":"0","outputSummaryDS":"1","maxlevelsRadio":"maxlevelsRadioDefault","vars2":"","statDescGroup":"Descriptive Statistics","show_SUMFREQS_":"0","freqVariable":"","MAXLEVELS":"20","statTop1Group":"Most Frequent Level","showDetailCombo":"showSubsetDetailChoice","maxlevelsRadioCustom":"0","orderDESCFORMAT":"Descending formatted","show_ORDER_":"0","show_LASTNUM_":"0","statVarGroup":"Variable Attributes","show_MFREQCFMT_":"0","summaryOutGroup":"Variable Summary","defaultStats":"Default statistics","casOutputLibrefNote":"The following tables must use a CAS engine libref:","rolesGroup":"ROLES","orderASC":"Ascending (default)","show_SKEWNESS_":"0","subsetDetailNobs":"20","show_MFREQCHR_":"0","optionsGroup":"METHODS","outListingGroup":"LISTINGS","show_RLEVEL_":"1","showSubsetDetailChoice":"Show subset of levels","LevelDetails":"Level Details","statisticsGroup":"STATISTICS","otherRolesGroup":"ADDITIONAL ROLES","showSummaryCombo":"showAllSummaryChoice","showAllVarsDetailChoice":"Show all levels of specified variables","showSubsetSummaryChoice":"Show subset of variable summary","maxlevelsRadioDefault":"1","show_LASTCHR_":"0","show_MAX_":"1","orderCombo":"asc","outputSummaryDSName":"mycas.card","selectedStats":"Selected statistics","show_FMTWIDTH_":"1","showDetail":"0","dataGroup":"DATA","varsToShow":"","sasVersion":"3.02","varsALL":"1","show_CARDINALITY_":"1","show_NOBS_":"0","outputGroup":"OUTPUT DATA","allStats":"All statistics","showAllDetailChoice":"Show all levels","show_KURTOSIS_":"0","outputTab":"OUTPUT","optionsTab":"OPTIONS","show_TYPE_":"1","statLastGroup":"Last Seen Level","show_MFREQ_":"0","dataset":{"librarytable":"MYCAS.CWPART"},"varsRadio":"varsALL","detailOutGroup":"Level Details","orderDESC":"Descending","outputDetailDSName":"","show_MISSFMT_":"0"}
+]]></TemplateValues>
+</Task>

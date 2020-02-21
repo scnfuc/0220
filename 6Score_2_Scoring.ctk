@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="6.2">
+    <Registration>
+        <Name>Scoring</Name>
+        <Description>The Scoring task scores a data table by using SAS DATA step code generated from a prior modeling task.</Description>
+        <GUID>b1d3737e-3552-4b28-9941-7296555686d1</GUID>
+        <Procedures>DATA STEP</Procedures>
+        <Version>4.2</Version>
+        <Links>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=studiotask_score&amp;locale=en">The DATA Step</Link>
+            <Link href="http://support.sas.com/training/tutorial/viya/index.html">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource libraryEngineInclude="CAS" name="dataset" where="true"/>
+            <DataSource indent="1" libraryEngineInclude="CAS" name="astoreName"/>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="dataGroup">DATA</Option>
+            <Option inputType="string" name="scoringGroup">OUTPUT DATA</Option>
+            <Option inputType="string" name="codeGroup">SCORING TYPE</Option>
+            <Option defaultValue="1" inputType="radio" name="sasDataset" variable="scoreType">Use scoring code</Option>
+            <Option indent="1" inputType="string" name="astoreMsg">Specify a CAS table:</Option>
+            <Option inputType="radio" name="astoreData" variable="scoreType">Use saved scoring model</Option>
+            <Option inputType="string" name="outputLibrefNote">The following table must use a CAS engine libref.</Option>
+            <Option inputType="outputdata" libraryEngineInclude="CAS"
+                name="outScoredDSName" required="true">Specify a CAS table:</Option>
+            <Option defaultExtension="sas" indent="1"
+                inputType="sasserverpath" name="scoringCodeFileName" width="100%">Specify the SAS scoring code file.</Option>
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="codeGroup">
+                <OptionItem option="sasDataset"/>
+                <OptionItem option="scoringCodeFileName"/>
+                <OptionItem option="astoreData"/>
+                <OptionItem option="astoreMsg"/>
+                <DataItem data="astoreName"/>
+            </Group>
+            <Group open="true" option="scoringGroup">
+                <OptionItem option="outputLibrefNote"/>
+                <OptionItem option="outScoredDSName"/>
+            </Group>
+        </Container>
+    </UI>
+    <Dependencies>
+        <Dependency condition="$scoreType == 'sasDataset'">
+            <Target action="show" conditionResult="true" option="scoringCodeFileName"/>
+            <Target action="hide" conditionResult="false" option="scoringCodeFileName"/>
+            <Target action="hide" conditionResult="true" option="astoreName"/>
+            <Target action="show" conditionResult="false" option="astoreName"/>
+            <Target action="hide" conditionResult="true" option="astoreMsg"/>
+            <Target action="show" conditionResult="false" option="astoreMsg"/>
+        </Dependency>
+    </Dependencies>
+    <Requirements>
+        <Requirement condition="!($outScoredDSName &amp;&amp; $outScoredDSName != '' &amp;&amp;      ($outScoredDSName.indexOf('.') > 0 &amp;&amp; $outScoredDSName.toUpperCase().substring(0,$outScoredDSName.indexOf('.')) == 'WORK'))">
+            <Message nlsKey="outScoredDSNameMsgKey">The scored table must have a two-level name that includes a CAS engine libref.</Message>
+        </Requirement>
+    </Requirements>
+    <CodeTemplate><![CDATA[
+ods noproctitle;
+
+### libname of the input dataset
+#set ($index = $dataset.toString().indexOf('.'))
+#set ($inLib = $dataset.toString().substring(0,$index))
+
+#if($scoreType == "sasDataset")
+data $outScoredDSName;
+  set $dataset#if($dataset.getWhereClause()!='') (where=($dataset.getWhereClause()))#end;
+  %include '$scoringCodeFileName.path/$scoringCodeFileName.name';
+run;
+#else
+proc astore;
+   score data=$dataset out=$outScoredDSName rstore=$astoreName;
+run;
+#end
+proc contents data=$outScoredDSName;
+run;
+]]></CodeTemplate>
+    <TemplateValues version="4.2"><![CDATA[
+{"astoreName":{"librarytable":"MYCAS.AP_SCORED_TREESPLIT"},"sasDataset":"1","astoreMsg":"Specify a CAS table:","scoringCodeFileName":{"path":"/r/ge.unx.sas.com/vol/vol120/u12/scnfuc","name":"score.sas"},"scoringGroup":"OUTPUT DATA","scoreType":"sasDataset","sasOS":"Linux LIN X64 4.1.12-61.1.22.el7uek.x86_64","dataTab":"DATA","astoreData":"0","dataGroup":"DATA","codeGroup":"SCORING TYPE","sasVersion":"3.02","outScoredDSName":"mycas.latest_Treesplit","dataset":{"librarytable":"MYCAS.LATEST_CRIMES"},"outputLibrefNote":"The following table must use a CAS engine libref."}
+]]></TemplateValues>
+</Task>

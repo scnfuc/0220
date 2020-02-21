@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="6.2">
+    <Registration>
+        <Name>Bar Chart</Name>
+        <Description>Bar charts compare numeric values or statistics between different values of a chart variable. Bar charts show the relative magnitude of data by displaying bars of varying height. Each bar represents a category of data.</Description>
+        <GUID>A0EEED19-14E9-4AA8-9E3E-4F1B22B078F2</GUID>
+        <Procedures>SGPLOT</Procedures>
+        <Version>4.2</Version>
+        <Links>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/cdlsearch?nh=25&amp;ct=80000&amp;qt=PROC+SGPLOT">PROC SGPLOT Documentation</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/dsearch?&amp;ct=5240&amp;qt=PROC+SGPLOT">PROC SGPLOT Papers</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/kb/?Find=Search&amp;ct=51000&amp;qt=PROC+SGPLOT">PROC SGPLOT Samples and SAS Notes</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <!--- Define the data roles for this task.    -->
+        <DataSources>
+            <DataSource name="DATASOURCE">
+                <Roles>
+                    <Role maxVars="1" minVars="1" name="CATEGORY" type="A">Category variable:</Role>
+                    <Role maxVars="1" minVars="0" name="RESPONSE" type="N">Response variable:</Role>
+                    <Role maxVars="1" minVars="0" name="GROUP" type="A">Group variable:</Role>
+                    <Role maxVars="1" minVars="0" name="URLVAR" type="C">URL variable:</Role>
+                    <Role maxVars="1" minVars="0" name="BYVAR" type="A">BY variable:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="DATATAB">DATA</Option>
+            <Option inputType="string" name="DATAGROUP">DATA</Option>
+            <Option inputType="string" name="ROLESGROUP">ROLES</Option>
+            <Option inputType="string" name="OPTIONSTAB">OPTIONS</Option>
+            <!--- Define the task options.-->
+            <Option inputType="string" name="where">WHERE CLAUSE FILTER</Option>
+            <Option defaultValue="0" inputType="checkbox" name="applyWhereClause">Apply where clause</Option>
+            <Option defaultValue="" indent="1" inputType="textbox"
+                name="whereString" width="300px">Where string:</Option>
+            <Option defaultValue="0" indent="1" inputType="checkbox" name="includeAsFootnote">Include as footnote</Option>
+            <Option inputType="string" name="whereClause">Where clause:</Option>
+            <Option inputType="string" name="Title">TITLE AND FOOTNOTE</Option>
+            <Option defaultValue="" inputType="inputtext"
+                name="titleSTRING" width="400px">Title:</Option>
+            <Option defaultValue="0" inputType="checkbox" name="setTITLESIZE">Set title font size</Option>
+            <Option decimalPlaces="0" defaultValue="14" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 5 and less than or equal to 24."
+                maxValue="24" minValue="5"
+                missingMessage="Enter an integer greater than or equal to 5 and less than or equal to 24."
+                name="titleSIZE"
+                promptMessage="Enter an integer greater than or equal to 5 and less than or equal to 24."
+                rangeMessage="Enter an integer greater than or equal to 5 and less than or equal to 24."
+                required="true" size="8em">Font size:</Option>
+            <Option defaultValue="" inputType="inputtext"
+                name="footnoteSTRING" width="400px">Footnote:</Option>
+            <Option defaultValue="0" inputType="checkbox" name="setFOOTNOTESIZE">Set footnote font size</Option>
+            <Option decimalPlaces="0" defaultValue="12" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 5 and less than or equal to 20."
+                maxValue="20" minValue="5"
+                missingMessage="Enter an integer greater than or equal to 5 and less than or equal to 20."
+                name="footnoteSIZE"
+                promptMessage="Enter an integer greater than or equal to 5 and less than or equal to 20."
+                rangeMessage="Enter an integer greater than or equal to 5 and less than or equal to 20."
+                required="true" size="8em">Font size:</Option>
+            <Option inputType="string" name="Direction">DIRECTION</Option>
+            <Option defaultValue="1" inputType="radio" name="Vertical"
+                value="Vertical" variable="barORIENT">Vertical</Option>
+            <Option inputType="radio" name="Horizontal"
+                value="Horizontal" variable="barORIENT">Horizontal</Option>
+            <Option inputType="string" name="GroupDisplay">GROUP LAYOUT</Option>
+            <Option defaultValue="1" inputType="radio" name="Cluster"
+                value="Cluster" variable="groupDISPLAY">Cluster</Option>
+            <Option inputType="radio" name="Stack" value="Stack" variable="groupDISPLAY">Stack</Option>
+            <Option inputType="string" name="Statistics">STATISTICS</Option>
+            <Option defaultValue="1" inputType="radio" name="Mean"
+                value="Mean" variable="barSTAT">Mean</Option>
+            <Option inputType="radio" name="Sum" value="Sum" variable="barSTAT">Sum</Option>
+            <Option inputType="string" name="LimitsHeader">Limits</Option>
+            <Option defaultValue="None" inputType="combobox"
+                name="barLIMITS" width="250px">Limits:</Option>
+            <Option inputType="string" name="None">None</Option>
+            <Option inputType="string" name="Both">Both</Option>
+            <Option inputType="string" name="Upper">Upper</Option>
+            <Option inputType="string" name="Lower">Lower</Option>
+            <Option defaultValue="CLM" inputType="combobox"
+                name="barLIMITSTAT" width="250px">Limit statistic:</Option>
+            <Option inputType="string" name="CLM">Confidence limit</Option>
+            <Option inputType="string" name="StdDev">Standard deviation</Option>
+            <Option inputType="string" name="StdErr">Standard error</Option>
+            <Option decimalPlaces="0" defaultValue="1" increment="1"
+                inputType="numstepper" maxValue="2" minValue="1"
+                name="barNUMSTD" required="true" size="8em">Limit multiplier:</Option>
+            <Option inputType="string" name="BarDetails">BAR DETAILS</Option>
+            <Option defaultValue="0" inputType="checkbox" name="useCOLOR">Apply bar color</Option>
+            <Option defaultValue="#CAD5E5" indent="1" inputType="color" name="barCOLOR">Bar color</Option>
+            <Option decimalPlaces="0,2" defaultValue="0"
+                increment="0.05" inputType="numstepper" maxValue="1.00"
+                minValue="0.00" name="barTRANS" required="true" size="8em">Transparency:</Option>
+            <Option defaultValue="0" inputType="checkbox" name="fillGRADIENT">Apply bar gradient</Option>
+            <Option defaultValue="None" inputType="combobox"
+                name="barSKIN" width="175px">Data skin:</Option>
+            <Option inputType="string" name="Gloss">Gloss</Option>
+            <Option inputType="string" name="Sheen">Sheen</Option>
+            <Option inputType="string" name="Crisp">Crisp</Option>
+            <Option inputType="string" name="Matte">Matte</Option>
+            <Option inputType="string" name="Pressed">Pressed</Option>
+            <Option inputType="string" name="BarStatLabels">BAR LABELS</Option>
+            <Option defaultValue="0" inputType="checkbox" name="barStatLABELS">Show bar labels or statistics</Option>
+            <Option inputType="string" name="CategoryAxis">CATEGORY AXIS</Option>
+            <Option defaultValue="0" inputType="checkbox" name="catREVERSE">Reverse</Option>
+            <Option defaultValue="0" inputType="checkbox" name="sortbyDATA">Show values in data order</Option>
+            <Option defaultValue="1" inputType="checkbox" name="showCATLABEL">Show label</Option>
+            <Option defaultValue="" inputType="inputtext"
+                name="catLABEL" width="300px">Custom label:</Option>
+            <Option inputType="string" name="ResponseAxis">RESPONSE AXIS</Option>
+            <Option defaultValue="1" inputType="checkbox" name="showRESPGRID">Show grid</Option>
+            <Option defaultValue="0" inputType="checkbox" name="dropSTATLABEL">Drop statistics suffix</Option>
+            <Option defaultValue="1" inputType="checkbox" name="showRESPLABEL">Show label</Option>
+            <Option defaultValue="" inputType="inputtext"
+                name="respLABEL" width="300px">Custom label:</Option>
+            <Option inputType="string" name="Legend">LEGEND DETAILS</Option>
+            <Option defaultValue="1" inputType="checkbox" name="legendSHOW">Show legend</Option>
+            <Option defaultValue="Outside" inputType="combobox"
+                name="legendLOC" width="250px">Legend location:</Option>
+            <Option inputType="string" name="Outside">Outside</Option>
+            <Option inputType="string" name="Inside">Inside</Option>
+            <Option inputType="string" name="GraphSize">GRAPH SIZE</Option>
+            <Option defaultValue="in" inputType="combobox"
+                name="dimTYPE" width="100px">Dimension:</Option>
+            <Option inputType="string" name="in">Inches</Option>
+            <Option inputType="string" name="cm">Cms</Option>
+            <Option inputType="string" name="px">Pixels</Option>
+            <Option decimalPlaces="0,1" defaultValue="6.4"
+                increment="0.1" inputType="numstepper" maxValue="12.0"
+                minValue="2.0" name="inchWIDTH" required="true" size="10em">Width:</Option>
+            <Option decimalPlaces="0,1" defaultValue="4.8"
+                increment="0.1" inputType="numstepper" maxValue="12.0"
+                minValue="2.0" name="inchHEIGHT" required="true" size="10em">Height:</Option>
+            <Option decimalPlaces="0,1" defaultValue="16"
+                increment="0.1" inputType="numstepper" maxValue="30.0"
+                minValue="5.0" name="cmWIDTH" required="true" size="10em">Width:</Option>
+            <Option decimalPlaces="0,1" defaultValue="12"
+                increment="0.1" inputType="numstepper" maxValue="30.0"
+                minValue="5.0" name="cmHEIGHT" required="true" size="10em">Height:</Option>
+            <Option decimalPlaces="0,1" defaultValue="640" increment="1"
+                inputType="numstepper" maxValue="1200" minValue="50"
+                name="pixelWIDTH" required="true" size="10em">Width:</Option>
+            <Option decimalPlaces="0,1" defaultValue="480" increment="1"
+                inputType="numstepper" maxValue="1200" minValue="50"
+                name="pixelHEIGHT" required="true" size="10em">Height:</Option>
+        </Options>
+    </Metadata>
+    <!--- Define the task options relationships                  -->
+    <!--- The UI engine will determine the best respresentation. -->
+    <UI>
+        <Container option="DATATAB">
+            <Group open="true" option="DATAGROUP">
+                <DataItem data="DATASOURCE"/>
+            </Group>
+            <Group open="false" option="where">
+                <OptionItem option="applyWhereClause"/>
+                <OptionItem option="whereString"/>
+                <OptionItem option="includeAsFootnote"/>
+            </Group>
+            <Group open="true" option="ROLESGROUP">
+                <RoleItem role="CATEGORY"/>
+                <RoleItem role="RESPONSE"/>
+                <RoleItem role="GROUP"/>
+                <RoleItem role="URLVAR"/>
+                <RoleItem role="BYVAR"/>
+            </Group>
+            <Group option="Direction">
+                <OptionItem option="Vertical"/>
+                <OptionItem option="Horizontal"/>
+            </Group>
+            <Group option="GroupDisplay">
+                <OptionItem option="Cluster"/>
+                <OptionItem option="Stack"/>
+            </Group>
+            <Group option="Statistics">
+                <OptionItem option="Mean"/>
+                <OptionItem option="Sum"/>
+                <Group option="LimitsHeader">
+                    <OptionChoice option="barLIMITS">
+                        <OptionItem option="None"/>
+                        <OptionItem option="Both"/>
+                        <OptionItem option="Upper"/>
+                        <OptionItem option="Lower"/>
+                    </OptionChoice>
+                    <OptionChoice option="barLIMITSTAT">
+                        <OptionItem option="CLM"/>
+                        <OptionItem option="StdDev"/>
+                        <OptionItem option="StdErr"/>
+                    </OptionChoice>
+                    <OptionItem option="barNUMSTD"/>
+                </Group>
+            </Group>
+        </Container>
+        <Container option="OPTIONSTAB">
+            <Group open="true" option="Title">
+                <OptionItem option="titleSTRING"/>
+                <OptionItem option="setTITLESIZE"/>
+                <OptionItem option="titleSIZE"/>
+                <OptionItem option="footnoteSTRING"/>
+                <OptionItem option="setFOOTNOTESIZE"/>
+                <OptionItem option="footnoteSIZE"/>
+            </Group>
+            <Group option="BarDetails">
+                <OptionItem option="useCOLOR"/>
+                <OptionItem option="barCOLOR"/>
+                <OptionItem option="barTRANS"/>
+                <OptionItem option="fillGRADIENT"/>
+                <OptionChoice option="barSKIN">
+                    <OptionItem option="None"/>
+                    <OptionItem option="Gloss"/>
+                    <OptionItem option="Sheen"/>
+                    <OptionItem option="Crisp"/>
+                    <OptionItem option="Matte"/>
+                    <OptionItem option="Pressed"/>
+                </OptionChoice>
+            </Group>
+            <Group option="BarStatLabels">
+                <OptionItem option="barStatLABELS"/>
+            </Group>
+            <Group option="CategoryAxis">
+                <OptionItem option="catREVERSE"/>
+                <OptionItem option="sortbyDATA"/>
+                <OptionItem option="showCATLABEL"/>
+                <OptionItem option="catLABEL"/>
+            </Group>
+            <Group option="ResponseAxis">
+                <OptionItem option="showRESPGRID"/>
+                <OptionItem option="dropSTATLABEL"/>
+                <OptionItem option="showRESPLABEL"/>
+                <OptionItem option="respLABEL"/>
+            </Group>
+            <Group option="Legend">
+                <OptionChoice option="legendLOC">
+                    <OptionItem option="Outside"/>
+                    <OptionItem option="Inside"/>
+                </OptionChoice>
+            </Group>
+            <Group option="GraphSize">
+                <OptionChoice option="dimTYPE">
+                    <OptionItem option="in"/>
+                    <OptionItem option="cm"/>
+                    <OptionItem option="px"/>
+                </OptionChoice>
+                <OptionItem option="inchWIDTH"/>
+                <OptionItem option="inchHEIGHT"/>
+                <OptionItem option="cmWIDTH"/>
+                <OptionItem option="cmHEIGHT"/>
+                <OptionItem option="pixelWIDTH"/>
+                <OptionItem option="pixelHEIGHT"/>
+            </Group>
+        </Container>
+    </UI>
+    <Dependencies>
+        <Dependency condition=" $applyWhereClause== '1' ">
+            <Target action="enable" conditionResult="true" option="whereString"/>
+            <Target action="disable" conditionResult="false" option="whereString"/>
+            <Target action="enable" conditionResult="true" option="includeAsFootnote"/>
+            <Target action="disable" conditionResult="false" option="includeAsFootnote"/>
+        </Dependency>
+        <Dependency condition="$GROUP.size() > 0">
+            <Target action="enable" conditionResult="true" option="groupDISPLAY"/>
+            <Target action="disable" conditionResult="false" option="groupDISPLAY"/>
+            <Target action="disable" conditionResult="true" option="useCOLOR"/>
+            <Target action="enable" conditionResult="false" option="useCOLOR"/>
+            <Target action="disable" conditionResult="true" option="barCOLOR"/>
+            <Target action="enable" conditionResult="false" option="barCOLOR"/>
+        </Dependency>
+        <Dependency condition=" $GROUP.size() > 0 &amp;&amp; $groupDISPLAY == 'Stack' ">
+            <Target action="disable" conditionResult="true" option="fillGRADIENT"/>
+            <Target action="enable" conditionResult="false" option="fillGRADIENT"/>
+        </Dependency>
+        <Dependency condition=" $RESPONSE.size() > 0 ">
+            <Target action="enable" conditionResult="true" option="dropSTATLABEL"/>
+            <Target action="disable" conditionResult="false" option="dropSTATLABEL"/>
+        </Dependency>
+        <Dependency condition="$setTITLESIZE == 1">
+            <Target action="enable" conditionResult="true" option="titleSIZE"/>
+            <Target action="disable" conditionResult="false" option="titleSIZE"/>
+        </Dependency>
+        <Dependency condition="$setFOOTNOTESIZE == 1">
+            <Target action="enable" conditionResult="true" option="footnoteSIZE"/>
+            <Target action="disable" conditionResult="false" option="footnoteSIZE"/>
+        </Dependency>
+        <Dependency condition=" $showCATLABEL == '1'">
+            <Target action="enable" conditionResult="true" option="catLABEL"/>
+            <Target action="disable" conditionResult="false" option="catLABEL"/>
+        </Dependency>
+        <Dependency condition=" $showRESPLABEL == '1'">
+            <Target action="enable" conditionResult="true" option="respLABEL"/>
+            <Target action="disable" conditionResult="false" option="respLABEL"/>
+        </Dependency>
+        <Dependency condition=" $useCOLOR== '1' ">
+            <Target action="enable" conditionResult="true" option="barCOLOR"/>
+            <Target action="disable" conditionResult="false" option="barCOLOR"/>
+        </Dependency>
+        <Dependency condition=" !($RESPONSE.size() > 0) || ( $GROUP.size() > 0 &amp;&amp; $groupDISPLAY == 'Stack') ">
+            <Target action="disable" conditionResult="true" option="barSTAT"/>
+            <Target action="enable" conditionResult="false" option="barSTAT"/>
+        </Dependency>
+        <Dependency condition=" $CATEGORY.size() > 0 &amp;&amp; $RESPONSE.size() > 0                      &amp;&amp; $barSTAT == 'Mean' &amp;&amp;  !($GROUP.size() > 0 &amp;&amp; $groupDISPLAY == 'Stack') ">
+            <Target action="enable" conditionResult="true" option="barLIMITS"/>
+            <Target action="disable" conditionResult="false" option="barLIMITS"/>
+        </Dependency>
+        <Dependency condition=" $CATEGORY.size() > 0 &amp;&amp; $RESPONSE.size() > 0                      &amp;&amp; !($GROUP.size() > 0 &amp;&amp; $groupDISPLAY == 'Stack')                       &amp;&amp; $barSTAT == 'Mean' &amp;&amp; !($barLIMITS == 'None') ">
+            <Target action="enable" conditionResult="true" option="barLIMITSTAT"/>
+            <Target action="disable" conditionResult="false" option="barLIMITSTAT"/>
+        </Dependency>
+        <Dependency condition=" $CATEGORY.size() > 0 &amp;&amp; $RESPONSE.size() > 0                      &amp;&amp; !($GROUP.size() > 0 &amp;&amp; $groupDISPLAY == 'Stack')                     &amp;&amp; $barSTAT == 'Mean'                      &amp;&amp; !($barLIMITS == 'None') &amp;&amp; !($barLIMITSTAT == 'CLM') ">
+            <Target action="enable" conditionResult="true" option="barNUMSTD"/>
+            <Target action="disable" conditionResult="false" option="barNUMSTD"/>
+        </Dependency>
+        <Dependency condition="$GROUP.size() > 0 ">
+            <Target action="enable" conditionResult="true" option="legendSHOW"/>
+            <Target action="disable" conditionResult="false" option="legendSHOW"/>
+        </Dependency>
+        <Dependency condition=" $legendSHOW == 1">
+            <Target action="enable" conditionResult="true" option="legendLOC"/>
+            <Target action="disable" conditionResult="false" option="legendLOC"/>
+        </Dependency>
+        <Dependency condition="($dimTYPE =='px')">
+            <Target action="show" conditionResult="true" option="pixelWIDTH"/>
+            <Target action="show" conditionResult="true" option="pixelHEIGHT"/>
+            <Target action="hide" conditionResult="true" option="inchWIDTH"/>
+            <Target action="hide" conditionResult="true" option="inchHEIGHT"/>
+            <Target action="hide" conditionResult="true" option="cmWIDTH"/>
+            <Target action="hide" conditionResult="true" option="cmHEIGHT"/>
+        </Dependency>
+        <Dependency condition="($dimTYPE =='in')">
+            <Target action="hide" conditionResult="true" option="pixelWIDTH"/>
+            <Target action="hide" conditionResult="true" option="pixelHEIGHT"/>
+            <Target action="show" conditionResult="true" option="inchWIDTH"/>
+            <Target action="show" conditionResult="true" option="inchHEIGHT"/>
+            <Target action="hide" conditionResult="true" option="cmWIDTH"/>
+            <Target action="hide" conditionResult="true" option="cmHEIGHT"/>
+        </Dependency>
+        <Dependency condition="($dimTYPE =='cm')">
+            <Target action="hide" conditionResult="true" option="pixelWIDTH"/>
+            <Target action="hide" conditionResult="true" option="pixelHEIGHT"/>
+            <Target action="hide" conditionResult="true" option="inchWIDTH"/>
+            <Target action="hide" conditionResult="true" option="inchHEIGHT"/>
+            <Target action="show" conditionResult="true" option="cmWIDTH"/>
+            <Target action="show" conditionResult="true" option="cmHEIGHT"/>
+        </Dependency>
+    </Dependencies>
+    <!--- Define the velocity code template.        -->
+    <CodeTemplate><![CDATA[
+
+##--Extract first item from list
+#if( $CATEGORY.size() > 0 ) #set( $CAT=$CATEGORY.get(0) ) #end
+#if( $RESPONSE.size() > 0)  #set( $RESP=$RESPONSE.get(0) ) #end
+#if( $GROUP.size() > 0)     #set( $GRP=$GROUP.get(0) ) #end
+#if( $URLVAR.size() > 0)    #set( $URL=$URLVAR.get(0) ) #end
+#if( $BYVAR.size() > 0)     #set( $BY=$BYVAR.get(0) ) #end
+
+##--Set Graph Size--*/
+#if ( $dimTYPE == "in" )
+  #set ($WIDTH = "$inchWIDTH$dimTYPE" )
+  #set ($HEIGHT = "$inchHEIGHT$dimTYPE" )
+#end
+
+#if ( $dimTYPE == "cm" )
+    #set ($WIDTH = "$cmWIDTH$dimTYPE" )
+    #set ($HEIGHT = "$cmHEIGHT$dimTYPE" )
+#end
+
+#if ( $dimTYPE == "px" )
+    #set ($WIDTH = "$pixelWIDTH$dimTYPE" )
+    #set ($HEIGHT = "$pixelHEIGHT$dimTYPE" )
+#end
+
+##--Build font size strings--*/
+#set( $pt = "pt" )
+#set ($titleSizePt = "$titleSIZE$pt" )
+#set ($footSizePt = "$footnoteSIZE$pt" )
+
+#if( $BY ) 
+/*--Sort data by BY variable--*/
+proc sort data=$DATASOURCE out=_BarChartTaskData;
+  by $BY; 
+run;
+#end
+
+#set ($catAXIS = 0)
+#if( $showCATLABEL == '0'  ||  $catLABEL != "" || $sortbyDATA == '1' || $catREVERSE== '1' ) #set ($catAXIS = 1) #end
+  
+/*--Set output size--*/
+ods graphics / reset 
+  #if (( $WIDTH ne "640px" && $WIDTH ne "6.4in" && $WIDTH ne "16cm") ||
+       ( $HEIGHT  ne "480px" && $HEIGHT ne "4.8in" && $HEIGHT ne "12cm"))
+     width=$WIDTH height=$HEIGHT #end
+  imagemap;
+
+/*--SGPLOT proc statement--*/
+proc sgplot data= #if( $BY ) _BarChartTaskData #else $DATASOURCE #end  
+  #if ( $applyWhereClause == 1 && $whereString.length() > 0 ) (where=($whereString)) #end
+ ;
+
+#if( $BY) 
+/*--BY Variable--*/
+  by $BY; 
+#end
+
+##-Build qouted strings for title and footnote to clean up any quotes provided by user
+#if( $titleSTRING != "" ) #set ($qTitleString = $CTMUtil.doubleQuoteString($titleSTRING) ) #end
+#if( $footnoteSTRING != "" ) #set ($qFootnoteString = $CTMUtil.doubleQuoteString($footnoteSTRING ) ) #end
+
+#if( $titleSTRING != "" || $footnoteSTRING != ""  || $includeAsFootnote == 1)
+/*--TITLE and FOOTNOTE--*/
+  #if( $titleSTRING != "" ) title
+    #if( $setTITLESIZE == 1 ) H=$titleSizePt #end 
+      $qTitleString;
+  #end 
+
+  #if( $includeAsFootnote == 1 && $whereString != "" ) footnote j=l
+    #if( $setFOOTNOTESIZE == 1 ) H=$footSizePt #end 
+    #set( $whereStr="$whereClause $whereString" ) $CTMUtil.doubleQuoteString($whereStr);
+  #end
+  
+  #if( $footnoteSTRING != "" ) footnote2 j=l
+    #if( $setFOOTNOTESIZE == 1 ) H=$footSizePt #end 
+      $qFootnoteString;
+  #end     
+#end
+
+
+/*--Bar chart settings--*/
+#if ($barORIENT == 'Vertical' ) vbar $CAT
+#else hbar $CAT
+#end  
+     / #if( $RESP ) response=$RESP #end
+       #if( $URL ) url=$URL #end
+       #if( $GRP ) group=$GRP groupdisplay=$groupDISPLAY
+       #else 
+           #if ( $useCOLOR == "1" && $barCOLOR !="none") fillattrs=(color=$barCOLOR) #end
+       #end
+       #if( $barStatLABELS== '1' )datalabel #end             
+       #if( $barLIMITS ) 
+           #if ( $barLIMITS != 'None' && $barSTAT == 'Mean' && !( $GRP && $groupDISPLAY == 'Stack' )) 
+                                limits=$barLIMITS limitstat=$barLIMITSTAT
+           #end
+           #if ( $barLIMITSTAT ) 
+                   #if ($barLIMITSTAT != 'CLM' ) numstd=$barNUMSTD #end
+           #end
+       #end
+       #if( $barTRANS != 0) transparency=$barTRANS #end
+       #if( $fillGRADIENT == '1') fillType=gradient #end
+       
+       #if ( $GRP )
+         #if( $RESP && $groupDISPLAY == 'Cluster') stat=$barSTAT 
+         #else #if( $RESP && $groupDISPLAY == 'Stack') stat=Sum #end 
+         #end
+       #else
+         #if( $RESP ) stat=$barSTAT #end
+       #end       
+       
+       #if( $barSKIN != 'None' ) dataskin=$barSKIN #end
+       #if( $dropSTATLABEL == '1' ) nostatlabel #end
+           name='Bar'
+        ;
+                                
+
+#if ( $catAXIS == '1' )
+/*--Category Axis--*/
+  #if ($barORIENT == 'Vertical' ) xaxis
+  #else yaxis
+  #end    
+    #if( $showCATLABEL == '0' )  display=(nolabel) #end
+    #if( $catLABEL != "" && $showCATLABEL != '0') label=$CTMUtil.doubleQuoteString($catLABEL) #end
+    #if( $sortbyDATA == '1' ) discreteorder=data #end
+    #if( $catREVERSE== '1' ) reverse #end
+;
+#end
+        
+/*--Response Axis--*/
+  #if ($barORIENT == 'Vertical' ) yaxis
+  #else xaxis
+  #end    
+    #if( $showRESPLABEL == '0' )  display=(nolabel) #end
+    #if( $showRESPLABEL != '0' && $respLABEL != '') label=$CTMUtil.doubleQuoteString($respLABEL) #end
+    #if( $showRESPGRID == '1' ) grid #end
+;       
+
+#if ($legendSHOW == '1' && $legendLOC == 'Inside')
+  #if( $GRP || $barLIMITS != 'None') 
+      /*--Legend Settings--*/
+      keylegend /
+                #if ( $legendLOC ) location=$legendLOC #end
+                #if ( $legendLOC == 'Inside' ) across=1 #end
+        ;            
+  #end
+#end
+run; 
+
+ods graphics / reset; 
+#if( $titleSTRING != "") title; #end 
+#if( $footnoteSTRING != "" || $includeAsFootnote == 1) footnote; #end
+
+]]></CodeTemplate>
+    
+
+
+
+
+
+<TemplateValues version="4.2">
+<![CDATA[
+{"Vertical":"1","dimTYPE":"in","whereClause":"Where clause:","Lower":"Lower","CLM":"Confidence limit","barSKIN":"None","px":"Pixels","cmWIDTH":"16","LimitsHeader":"Limits","sasOS":"Linux LIN X64 4.1.12-61.1.22.el7uek.x86_64","barLIMITS":"None","titleSTRING":"Types of Crimes and Arrest Rates","DATASOURCE":{"librarytable":"MYCAS.CRIMECENSUS"},"useCOLOR":"0","BYVAR":"","catREVERSE":"0","RESPONSE":"","legendLOC":"Outside","inchHEIGHT":"4.8","StdDev":"Standard deviation","whereString":"","inchWIDTH":"6.4","showRESPGRID":"0","in":"Inches","footnoteSTRING":"","groupDISPLAY":"Stack","ResponseAxis":"RESPONSE AXIS","pixelHEIGHT":"480","DATAGROUP":"DATA","Sum":"0","respLABEL":"","pixelWIDTH":"640","catLABEL":"","Stack":"1","dropSTATLABEL":"0","GraphSize":"GRAPH SIZE","Both":"Both","showCATLABEL":"0","setTITLESIZE":"0","applyWhereClause":"0","barLIMITSTAT":"CLM","showRESPLABEL":"1","Mean":"1","Pressed":"Pressed","Legend":"LEGEND DETAILS","Horizontal":"0","barNUMSTD":"1","Inside":"Inside","Direction":"DIRECTION","legendSHOW":"1","Outside":"Outside","GROUP":"json:[{\"value\":\"Arrest\",\"type\":\"Char\",\"length\":5,\"format\":\"$5.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","StdErr":"Standard error","CATEGORY":"json:[{\"value\":\"fbi_code\",\"type\":\"Char\",\"length\":25,\"format\":\"$FBI25.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","sortbyDATA":"0","DATATAB":"DATA","where":"WHERE CLAUSE FILTER","Matte":"Matte","barCOLOR":"#CAD5E5","BarStatLabels":"BAR LABELS","fillGRADIENT":"0","ROLESGROUP":"ROLES","OPTIONSTAB":"OPTIONS","Upper":"Upper","setFOOTNOTESIZE":"0","barORIENT":"Vertical","Title":"TITLE AND FOOTNOTE","footnoteSIZE":"12","Cluster":"0","cm":"Cms","URLVAR":"","titleSIZE":"14","barTRANS":"0","Statistics":"STATISTICS","barStatLABELS":"0","barSTAT":"Mean","Gloss":"Gloss","Crisp":"Crisp","sasVersion":"3.02","includeAsFootnote":"0","CategoryAxis":"CATEGORY AXIS","cmHEIGHT":"12","BarDetails":"BAR DETAILS","Sheen":"Sheen","None":"None","GroupDisplay":"GROUP LAYOUT"}
+]]>
+</TemplateValues>
+</Task>

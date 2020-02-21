@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="6.2">
+    <Registration>
+        <Name>Assess</Name>
+        <Description>The Assess task evaluates model performance based on a scored data table.</Description>
+        <GUID>72adfa19-5576-43fb-9c74-f1199232955c</GUID>
+        <Procedures>ASSESS</Procedures>
+        <Version>4.2</Version>
+        <Links>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=ancmn_assess&amp;locale=en">The ASSESS Procedure</Link>
+            <Link href="http://support.sas.com/training/tutorial/viya/index.html">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource libraryEngineInclude="CAS" name="dataset" where="true">
+                <Roles>
+                    <Role
+                        exclude="predictedVar,eventProbVar,freqVariable,byVariables"
+                        fetchDistinct="true" maxVars="1" minVars="1"
+                        name="categoricalTarget" type="A">Target:</Role>
+                    <Role
+                        exclude="predictedVar,eventProbVar,freqVariable,byVariables"
+                        maxVars="1" minVars="1" name="continuousTarget" type="N">Target:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,eventProbVar,freqVariable,byVariables"
+                        maxVars="1" minVars="1" name="predictedVar" type="N">Predicted target:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,predictedVar,freqVariable,byVariables"
+                        indent="1" maxVars="1" minVars="1"
+                        name="eventProbVar" type="N">Posterior probability of target event:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,predictedVar,eventProbVar,byVariables"
+                        maxVars="1" minVars="0" name="freqVariable" type="N">Frequency count:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,predictedVar,eventProbVar,freqVariable"
+                        maxVars="1" minVars="0" name="byVariables"
+                        order="true" type="A">Partition by:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="dataGroup">DATA</Option>
+            <Option inputType="string" name="dataLabel">Specify scored CAS table:</Option>
+            <Option inputType="string" name="rolesGroup">ROLES</Option>
+            <Option inputType="string" name="otherRolesGroup">ADDITIONAL ROLES</Option>
+            <Option inputType="radio" name="useIntervalTarget" variable="targetType">Use an interval target</Option>
+            <Option defaultValue="1" inputType="radio"
+                name="useNominalTarget" variable="targetType">Use a nominal target</Option>
+            <Option indent="1" inputType="distinct" max="20"
+                name="eventLevel" required="true" source="categoricalTarget">Event level of target:</Option>
+            <Option indent="1" inputType="distinct" max="20"
+                name="plotPartition" required="false" source="byVariables">Pick a partition to plot:</Option>
+            <Option indent="1" inputType="distinct" max="20"
+                name="assessPartition" required="false" source="byVariables"/>
+            <Option defaultValue="0" inputType="checkbox" name="specifyAssessPartition">Pick a partition to assess:</Option>
+            <Option inputType="string" name="optionsTab">OPTIONS</Option>
+            <Option inputType="string" name="plotsGroup">PLOTS</Option>
+            <Option defaultValue="1" inputType="checkbox" name="plotLiftChart">Lift chart</Option>
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="plotCumulativeLiftChart">Cumulative lift chart</Option>
+            <Option defaultValue="0" inputType="checkbox" name="plotResponseChart">Captured response chart</Option>
+            <Option defaultValue="1" inputType="checkbox" name="plotROCChart">ROC curve</Option>
+            <Option inputType="string" name="percentileOptionsGroup">LIFT ANALYSIS</Option>
+            <Option defaultValue="percentStep1"
+                defaultnlsKey="percentStepComboKey" inputType="combobox" name="percentStepCombo">Lift curve type:</Option>
+            <Option inputType="string" name="percentStep05" returnValue="20">Semi-decile</Option>
+            <Option inputType="string" name="percentStep1" returnValue="10">Decile (default)</Option>
+            <Option inputType="string" name="convergenceGroup">Percentile Analysis</Option>
+            <Option indent="0" inputType="string" name="maxiterLabel">Maximum number of iterations:</Option>
+            <Option defaultValue="1" indent="0" inputType="radio"
+                name="maxiterRadioDefault" variable="maxiterRadio">Use 50 (default)</Option>
+            <Option defaultValue="0" indent="0" inputType="radio"
+                name="maxiterRadioCustom" variable="maxiterRadio">Use custom value</Option>
+            <Option decimalPlaces="0" defaultValue="50" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer greater than or equal to 10 for the maximum number of iterations"
+                minValue="10"
+                missingMessage="Enter an integer greater than or equal to 10 for the maximum number of iterations"
+                name="maxiter"
+                promptMessage="Enter an integer greater than or equal to 10 for the maximum number of iterations"
+                rangeMessage="Enter an integer greater than or equal to 10 for the maximum number of iterations"
+                required="true" width="100px">Number of iterations:</Option>
+            <Option inputType="string" name="rocOptionsGroup">ROC ANALYSIS</Option>
+            <Option defaultValue="cutoffStep1"
+                defaultnlsKey="cutoffStepComboKey" inputType="combobox" name="cutoffStepCombo">Increase cutoff probability from 0 to 1 by:</Option>
+            <Option inputType="string" name="cutoffStep01" returnValue="100">0.01</Option>
+            <Option inputType="string" name="cutoffStep02" returnValue="50">0.02</Option>
+            <Option inputType="string" name="cutoffStep04" returnValue="25">0.04</Option>
+            <Option inputType="string" name="cutoffStep05" returnValue="20">0.05</Option>
+            <Option inputType="string" name="cutoffStep1" returnValue="10">0.1 (default)</Option>
+            <Option inputType="string" name="cutoffStep2" returnValue="5">0.2</Option>
+            <Option inputType="string" name="fitStatOptionsGroup">FIT STATISTICS</Option>
+            <Option defaultValue="1" inputType="checkbox" name="produceFitStat">Produce fit statistics</Option>
+            <Option inputType="string" name="pvarGroup">Posterior Probabilities</Option>
+            <Option indent="0" inputType="string" name="eventVarMappingLabel">Specify posterior probabilities for non-event target levels:</Option>
+            <Option defaultValue="1" indent="0" inputType="radio"
+                name="eventVarMappingRadioPattern" variable="eventVarMappingRadio">Detect automatically</Option>
+            <Option defaultValue="0" indent="0" inputType="radio"
+                name="eventVarMappingRadioCustom" variable="eventVarMappingRadio">Specify manually</Option>
+            <Option defaultValue="0" indent="1" inputType="checkbox" name="specifyPattern">Transform level before detection</Option>
+            <Option defaultValue="[^A-Za-z0-9]" indent="1"
+                inputType="inputtext" name="regexFrom" required="true" width="100px">Find what:</Option>
+            <Option defaultValue="_" indent="1" inputType="inputtext"
+                name="regexTo" required="true" width="100px">Replace with:</Option>
+            <OptionTable addRemoveRowTools="true" indent="1"
+                initialNumberOfRows="1" minimumRequiredRows="1"
+                name="nonEventMapping" noIncompleteRows="true" showColumnHeadings="true">
+                <Columns>
+                    <Column label="Level" name="pevent">
+                        <Option inputType="textbox" required="false"/>
+                    </Column>
+                    <Column label="Variable" name="pvar">
+                        <Option inputType="textbox" required="false"/>
+                    </Column>
+                </Columns>
+            </OptionTable>
+            <Option indent="0" inputType="string" name="delimiterLabel">Delimiter in level list:</Option>
+            <Option defaultValue="1" indent="0" inputType="radio"
+                name="delimiterRadioDefault" variable="delimiterRadio">Detect automatically</Option>
+            <Option defaultValue="0" indent="0" inputType="radio"
+                name="delimiterRadioCustom" variable="delimiterRadio">Specify custom delimiter</Option>
+            <Option defaultValue="," indent="1" inputType="inputtext"
+                name="delimiter" required="true" width="100px">Delimiter:</Option>
+            <Option inputType="string" name="outputTab">OUTPUT</Option>
+            <Option inputType="string" name="assessGroup">OUTPUT DATA</Option>
+            <Option inputType="string" name="odsOutputLibrefNote">The following data sets must use a SAS libref.</Option>
+            <Option inputType="checkbox" name="outRocDS">Save ROC information</Option>
+            <Option defaultValue="roc" indent="1" inputType="outputdata"
+                libraryEngineInclude="v9" name="outRocDSName" required="true">Specify a SAS data set:</Option>
+            <Option inputType="checkbox" name="outLiftInfoDS">Save lift information</Option>
+            <Option defaultValue="lift" indent="1"
+                inputType="outputdata" libraryEngineInclude="v9"
+                name="outLiftInfoDSName" required="true">Specify a SAS data set:</Option>
+            <Option inputType="checkbox" name="outFitDS">Save fit statistics</Option>
+            <Option defaultValue="fitStat" indent="1"
+                inputType="outputdata" libraryEngineInclude="v9"
+                name="outFitDSName" required="true">Specify a SAS data set:</Option>
+            <Option inputType="string" name="pvarMsg">Fit statistics cannot be generated because no posterior probability variables for non-event levels are detected.  Assign posterior probability variables on the OPTIONS tab.</Option>
+            <Option inputType="string" name="delimiterMsg">Fit statistics cannot be generated because no valid delimiter for target levels is detected.  Edit the code and specify a delimiter that does not appear in any of the target levels.</Option>
+            <Option inputType="string" name="ROCCurveLabel">ROC Curve (Target = {1}, Event = {2})</Option>
+            <Option inputType="string" name="Falsepositiverate">False positive rate</Option>
+            <Option inputType="string" name="Truepositiverate">True positive rate</Option>
+            <Option inputType="string" name="CumulativeLiftChartLabel">Cumulative Lift Chart (Target = {1}, Event = {2})</Option>
+            <Option inputType="string" name="LiftChartLabel">Lift Chart (Target = {1}, Event = {2})</Option>
+            <Option inputType="string" name="PopulationPercentage">Population Percentage</Option>
+            <Option inputType="string" name="Lift">Lift</Option>
+            <Option inputType="string" name="CumulativeResponseRate">Cumulative Response Rate (Target = {1}, Event = {2})</Option>
+            <Option inputType="string" name="PopulationPercentage">Population Percentage</Option>
+            <Option inputType="string" name="ResponsePercentage">Response Percentage</Option>
+            <Option inputType="string" name="RegressionLiftChartLabel">Regression Lift Chart (Target = {1})</Option>
+            <Option inputType="string" name="Populationpercentile">Population percentile</Option>
+            <Option inputType="string" name="Response">Response</Option>
+            <Option inputType="string" name="addOneRowComment">Add a row in lift information table for depth of 0.</Option>
+            <Option inputType="string" name="varNotExistsMsg">Variable does not exist in input dataset:</Option>
+            <Option inputType="string" name="LegendLabelTarget">Target</Option>
+            <Option inputType="string" name="LegendLabelPredicted">Predicted</Option>
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <OptionItem option="dataLabel"/>
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="rolesGroup">
+                <OptionItem option="useNominalTarget"/>
+                <OptionItem option="useIntervalTarget"/>
+                <RoleItem role="categoricalTarget"/>
+                <RoleItem role="continuousTarget"/>
+                <OptionItem option="eventLevel"/>
+                <RoleItem role="predictedVar"/>
+                <RoleItem role="eventProbVar"/>
+            </Group>
+            <Group option="otherRolesGroup">
+                <RoleItem role="freqVariable"/>
+                <!--RoleItem role="byVariables"/>
+		<OptionItem option="specifyAssessPartition"/>
+		<OptionItem option="assessPartition"/-->
+            </Group>
+        </Container>
+        <Container option="optionsTab">
+            <Group open="true" option="percentileOptionsGroup">
+                <OptionChoice option="percentStepCombo">
+                    <OptionItem option="percentStep05"/>
+                    <OptionItem option="percentStep1"/>
+                </OptionChoice>
+                <Group open="false" option="convergenceGroup">
+                    <OptionItem option="maxiterLabel"/>
+                    <OptionItem option="maxiterRadioDefault"/>
+                    <OptionItem option="maxiterRadioCustom"/>
+                    <OptionItem option="maxiter"/>
+                </Group>
+            </Group>
+            <Group open="true" option="rocOptionsGroup">
+                <OptionChoice option="cutoffStepCombo">
+                    <OptionItem option="cutoffStep01"/>
+                    <OptionItem option="cutoffStep02"/>
+                    <OptionItem option="cutoffStep04"/>
+                    <OptionItem option="cutoffStep05"/>
+                    <OptionItem option="cutoffStep1"/>
+                    <OptionItem option="cutoffStep2"/>
+                </OptionChoice>
+            </Group>
+            <Group open="true" option="fitStatOptionsGroup">
+                <OptionItem option="produceFitStat"/>
+                <Group open="true" option="pvarGroup">
+                    <OptionItem option="eventVarMappingLabel"/>
+                    <OptionItem option="eventVarMappingRadioPattern"/>
+                    <OptionItem option="eventVarMappingRadioCustom"/>
+                    <OptionItem option="nonEventMapping"/>
+                </Group>
+            </Group>
+            <Group open="true" option="plotsGroup">
+                <OptionItem option="plotROCChart"/>
+                <OptionItem option="plotLiftChart"/>
+                <OptionItem option="plotCumulativeLiftChart"/>
+                <OptionItem option="plotResponseChart"/>
+                <!--OptionItem option="plotPartition"/-->
+            </Group>
+        </Container>
+        <Container option="outputTab">
+            <Group open="true" option="assessGroup">
+                <OptionItem option="odsOutputLibrefNote"/>
+                <OptionItem option="outRocDS"/>
+                <OptionItem option="outRocDSName"/>
+                <OptionItem option="outLiftInfoDS"/>
+                <OptionItem option="outLiftInfoDSName"/>
+                <OptionItem option="outFitDS"/>
+                <OptionItem option="outFitDSName"/>
+            </Group>
+        </Container>
+    </UI>
+    <Dependencies>
+        <!-- Nominal target -->
+        <Dependency condition="($targetType == 'useNominalTarget')">
+            <Target action="show" conditionResult="true" option="categoricalTarget"/>
+            <Target action="hide" conditionResult="false" option="categoricalTarget"/>
+            <Target action="show" conditionResult="true" option="eventProbVar"/>
+            <Target action="hide" conditionResult="false" option="eventProbVar"/>
+            <Target action="show" conditionResult="true" option="eventLevel"/>
+            <Target action="hide" conditionResult="false" option="eventLevel"/>
+            <Target action="show" conditionResult="true" option="rocOptionsGroup"/>
+            <Target action="hide" conditionResult="false" option="rocOptionsGroup"/>
+            <Target action="show" conditionResult="true" option="fitStatOptionsGroup"/>
+            <Target action="hide" conditionResult="false" option="fitStatOptionsGroup"/>
+            <Target action="show" conditionResult="true" option="plotROCChart"/>
+            <Target action="hide" conditionResult="false" option="plotROCChart"/>
+            <Target action="show" conditionResult="true" option="plotCumulativeLiftChart"/>
+            <Target action="hide" conditionResult="false" option="plotCumulativeLiftChart"/>
+            <Target action="show" conditionResult="true" option="plotResponseChart"/>
+            <Target action="hide" conditionResult="false" option="plotResponseChart"/>
+            <Target action="show" conditionResult="true" option="outRocDS"/>
+            <Target action="hide" conditionResult="false" option="outRocDS"/>
+            <Target action="show" conditionResult="true" option="outRocDSName"/>
+            <Target action="hide" conditionResult="false" option="outRocDSName"/>
+            <Target action="hide" conditionResult="true" option="continuousTarget"/>
+            <Target action="show" conditionResult="false" option="continuousTarget"/>
+            <Target action="hide" conditionResult="true" option="predictedVar"/>
+            <Target action="show" conditionResult="false" option="predictedVar"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget') &amp;&amp; $categoricalTarget.size()>0">
+            <Target action="enable" conditionResult="true" option="eventProbVar"/>
+            <Target action="disable" conditionResult="false" option="eventProbVar"/>
+            <Target action="enable" conditionResult="true" option="eventLevel"/>
+            <Target action="disable" conditionResult="false" option="eventLevel"/>
+        </Dependency>
+        <Dependency condition="($targetType != 'useNominalTarget') &amp;&amp; $continuousTarget.size()>0">
+            <Target action="enable" conditionResult="true" option="predictedVar"/>
+            <Target action="disable" conditionResult="false" option="predictedVar"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $produceFitStat == 1)">
+            <Target action="show" conditionResult="true" option="pvarGroup"/>
+            <Target action="hide" conditionResult="false" option="pvarGroup"/>
+        </Dependency>
+        <Dependency condition="(($targetType == 'useNominalTarget' &amp;&amp; $produceFitStat == 1) || $targetType == 'useIntervalTarget')">
+            <Target action="show" conditionResult="true" option="outFitDS"/>
+            <Target action="hide" conditionResult="false" option="outFitDS"/>
+            <Target action="show" conditionResult="true" option="outFitDSName"/>
+            <Target action="hide" conditionResult="false" option="outFitDSName"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $produceFitStat == 1 &amp;&amp; $eventVarMappingRadio.equalsIgnoreCase('eventVarMappingRadioCustom'))">
+            <Target action="show" conditionResult="true" option="nonEventMapping"/>
+            <Target action="hide" conditionResult="false" option="nonEventMapping"/>
+        </Dependency>
+        <Dependency condition="($maxiterRadio.equalsIgnoreCase('maxiterRadioCustom'))">
+            <Target action="show" conditionResult="true" option="maxiter"/>
+            <Target action="hide" conditionResult="false" option="maxiter"/>
+        </Dependency>
+        <!-- Group for assessment -->
+        <!--Dependency condition="$byVariables.size()>0">
+            <Target option="specifyAssessPartition" conditionResult="true"  action="show"/>
+            <Target option="specifyAssessPartition" conditionResult="false" action="hide"/>
+        </Dependency>
+
+        <Dependency condition="$byVariables.size()>0 &amp;&amp; $specifyAssessPartition==1">
+            <Target option="assessPartition" conditionResult="true"  action="show"/>
+            <Target option="assessPartition" conditionResult="false" action="hide"/>
+        </Dependency>
+
+        <Dependency condition="$byVariables.size()>0 &amp;&amp; $specifyAssessPartition==0 &amp;&amp; ($plotLiftChart==1 || $plotROCChart==1)">
+            <Target option="plotPartition" conditionResult="true"  action="show"/>
+            <Target option="plotPartition" conditionResult="false" action="hide"/>
+        </Dependency-->
+        <Dependency condition="($outFitDS==1)">
+            <Target action="enable" conditionResult="true" option="outFitDSName"/>
+            <Target action="disable" conditionResult="false" option="outFitDSName"/>
+        </Dependency>
+        <Dependency condition="($outLiftInfoDS==1)">
+            <Target action="enable" conditionResult="true" option="outLiftInfoDSName"/>
+            <Target action="disable" conditionResult="false" option="outLiftInfoDSName"/>
+        </Dependency>
+        <Dependency condition="($outRocDS==1)">
+            <Target action="enable" conditionResult="true" option="outRocDSName"/>
+            <Target action="disable" conditionResult="false" option="outRocDSName"/>
+        </Dependency>
+    </Dependencies>
+    <CodeTemplate><![CDATA[
+### Check and auto detect valid delimiter
+#if($delimiter)
+	#set ($delimiterAuto = "$delimiter")
+        #set ($found = 0)
+	#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0]))
+	   #if($item.toString().indexOf("$delimiterAuto") > -1) 
+	     #set($found = 1)
+	   #end
+	#end
+#else
+	#set ($delimiterAuto = " ")
+        #set ($found = 0)
+	#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0])) 
+	 #if($item.toString().indexOf("$delimiterAuto") > -1) 
+	   #set($found = 1)
+	 #end
+	#end
+#end
+#if($found == 1)
+	#set ($delimiterAuto = ",")
+	#set ($found = 0)
+	#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0])) 
+	 #if($item.toString().indexOf("$delimiterAuto") > -1) 
+	   #set($found = 1)
+	 #end
+	#end
+#end
+#if($found == 1)
+	#set ($delimiterAuto = ";")
+	#set ($found = 0)
+	#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0])) 
+	 #if($item.toString().indexOf("$delimiterAuto") > -1) 
+	   #set($found = 1)
+	 #end
+	#end
+#end
+#if($found == 1)
+	#set ($delimiterAuto = ".")
+	#set ($found = 0)
+	#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0])) 
+	 #if($item.toString().indexOf("$delimiterAuto") > -1) 
+	   #set($found = 1)
+	 #end
+	#end
+#end
+#if($found == 1)
+	#set ($delimiterAuto = "*")
+	#set ($found = 0)
+	#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0])) 
+	 #if($item.toString().indexOf("$delimiterAuto") > -1) 
+	   #set($found = 1)
+	 #end
+	#end
+#end
+#if($found == 1)
+	#set ($delimiterAuto = "null")
+#end
+       
+        
+### Auto detect patterns between event target level and it's corresponding probability variable
+#set($specifyPattern = 0)
+#if($specifyPattern == 1)
+    #set ($eventMangledCustom  = $eventLevel.replaceAll("$regexFrom", "$regexTo"))
+#else
+    #set ($regexFrom = "[^A-Za-z0-9]")
+    #set ($eventMangledSpace    = $eventLevel.replaceAll("$regexFrom", " "))
+    #set ($eventMangledUnderbar = $eventLevel.replaceAll("$regexFrom", "_"))
+    #set ($eventMangledDelete   = $eventLevel.replaceAll("$regexFrom", ""))
+    #set ($indexSpace           = $eventProbVar[0].toString().indexOf("$eventMangledSpace"))
+    #set ($indexUnderbar        = $eventProbVar[0].toString().indexOf("$eventMangledUnderbar"))
+    #set ($indexDelete          = $eventProbVar[0].toString().indexOf("$eventMangledDelete"))
+    #set ($indexNONE            = $eventProbVar[0].toString().indexOf("$eventLevel"))
+#end
+#set ($pattern = "#if($specifyPattern == 1)$regexTo#elseif($indexUnderbar > -1)_#elseif($indexDelete > -1)#elseif($indexSpace > -1) #elseif($indexNONE > -1)NONE#{else}null#end")
+#set ($event   = "#if($specifyPattern == 1)$eventMangledCustom#elseif($indexUnderbar > -1)$eventMangledUnderbar#elseif($indexDelete > -1)$eventMangledDelete#elseif($indexSpace > -1)$eventMangledSpace#{else}$eventLevel#end")
+#set ($index = $eventProbVar[0].toString().indexOf("$event"))
+#set ($len   = $event.length())
+#set ($prefix = "#if($index > -1)$eventProbVar[0].toString().substring(0,$index)#{else}null#end")
+#set ($suffix = "#if($index > -1)$eventProbVar[0].toString().substring($MathTool.add($index,$len))#{else}null#end")
+
+#if($pattern != 'null')
+#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0])) 
+    #set ($mangled =$item.replaceAll("$regexFrom", "$pattern").toString())
+    #if(!$dataset.columnExists("#if($prefix != 'null')$prefix#end#if($pattern != 'NONE')$mangled#{else}$item#end#if($suffix!='null')$suffix#end"))
+        /* $varNotExistsMsg "$prefix#if($pattern != 'NONE')$mangled#{else}$item#end$suffix" */
+        #set ($prefix = "null")
+        #set ($postfix = "null")
+        #break($foreach)
+    #end
+#end
+#end
+
+###"$specifyPattern"
+###"$regexFrom"
+###eventMangledSpace = "$eventMangledSpace";
+###eventMangledUnderbar="$eventMangledUnderbar";
+###eventMangledDelete = "$eventMangledDelete";
+###eventLevel = "$eventLevel"
+###$eventProbVar[0].toString()
+###"$pattern"
+###"$event"
+###$index    
+###$len
+###$MathTool.add($index,$len)
+###"$prefix"
+###"$suffix"
+
+ods noproctitle;
+
+proc assess
+
+data=$dataset#if($dataset.getWhereClause()!='') (where=($dataset.getWhereClause()))#end
+
+### Options
+#if($percentStepCombo) nbins = $percentStepCombo #end
+#if($cutoffStepCombo)  ncuts = $cutoffStepCombo #end
+#if($maxiter) maxiters = $maxiter #end
+;
+
+### Target stmt
+target #if ($targetType == 'useNominalTarget' && $categoricalTarget.size() > 0)$categoricalTarget[0] #elseif($continuousTarget.size() > 0) $continuousTarget[0] #end
+#if($targetType == 'useNominalTarget') 
+/ event="$eventLevel" level=nominal
+#end
+;
+
+### Input stmts 
+input
+#if($targetType == 'useNominalTarget')
+	#foreach ($item in $eventProbVar ) $item #end
+#else
+	#foreach ($item in $predictedVar ) $item #end
+#end
+;
+
+### FitStat stmt
+###       fitstat pvar=P_HEATElectric P_HEATCoal_Wood P_HEATFuel_Oil /
+###               pevent="Electric,Coal/Wood,Fuel Oil" delimiter=',';
+#set( $nlev = $dataset.getDistinctValues($categoricalTarget[0]).size())
+#if( $targetType == 'useNominalTarget')
+    #if($delimiterAuto != "null")
+        #if ($eventVarMappingRadio.equalsIgnoreCase('eventVarMappingRadioPattern') && $prefix != "null" && $postfix != "null")
+            fitstat pvar=#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0]))#if("$item" != "$eventLevel")$prefix#if($pattern != 'NONE')$item.replaceAll("$regexFrom", "$pattern")#{else}$item#end$suffix #end#end/
+            pevent="#foreach ($item in $dataset.getDistinctValues($categoricalTarget[0]))#if("$item" != "$eventLevel")$item#if(($velocityCount <= $MathTool.sub($nlev,2)) ||($velocityCount == $MathTool.sub($nlev,1) && "$dataset.getDistinctValues($categoricalTarget[0])[$MathTool.sub($nlev,1)]" != "$eventLevel"))$delimiterAuto#end#end#end" delimiter="$delimiterAuto";
+        #elseif($eventVarMappingRadio.equalsIgnoreCase('eventVarMappingRadioPattern') && ($prefix == 'null' || $postfix == 'null'))
+        /* $pvarMsg */
+        #elseif ($nonEventMapping.rows.values.size() > 0)  
+            fitstat pvar=#foreach($item in $nonEventMapping.rows.values) $item.pvar #end/
+                         pevent="#foreach($item in $nonEventMapping.rows.values)$item.pevent#if($velocityCount<$nonEventMapping.rows.values.size()),#end#end" delimiter=',';
+        #end
+    #else
+        /* $delimiterMsg */
+    #end
+#end
+
+### Freq stmt
+#if( $freqVariable.size() > 0 )
+    freq #foreach( $item in $freqVariable ) $item #end;
+#end
+
+### By stmt
+#if( $byVariables.size() > 0 )
+    #if ($eventVarMappingRadio.equalsIgnoreCase('eventVarMappingRadioPattern'))
+        fitstat pvar=        
+    #end
+    by #foreach( $item in $byVariables ) $item #end;
+    where $byVariables[0] = "$plotPartition";
+#end
+
+
+### ODS Out stmt
+#if ($outFitDS==1 || $outRocDS==1 || $outLiftInfoDS==1 || $plotROCChart == 1 || $plotLiftChart == 1 || $plotResponseChart == 1 || $plotCumulativeLiftChart == 1)
+ods output 
+   #if ($outFitDS==1) FitStat=$outFitDSName #end
+   #if ($outRocDS==1) ROCInfo=$outRocDSName #elseif($plotROCChart == 1)ROCInfo=WORK._roc_temp#end
+   #if ($outLiftInfoDS==1) #if($targetType == 'useNominalTarget')LIFTInfo#{else}LIFTREGInfo#end=$outLiftInfoDSName #elseif($plotLiftChart == 1 || $plotResponseChart == 1 || $plotCumulativeLiftChart == 1)#if($targetType == 'useNominalTarget')LIFTInfo#{else}LIFTREGInfo#end=WORK._lift_temp#end
+   ;
+#end
+run;
+
+
+### ROC Curve
+#if($targetType == 'useNominalTarget' && $plotROCChart == 1)
+#set( $ROCCurveLabel1 = $ROCCurveLabel.replace("{1}", "$categoricalTarget[0].get('value')") )
+#set( $ROCCurveLabel2 = $ROCCurveLabel1.replace("{2}", "$eventLevel") )
+data _null_;
+   set #if($outRocDS==1)$outRocDSName#{else}WORK._roc_temp#end(obs=1);
+   call symput('AUC',round(C,0.01));
+run;
+proc sgplot data=#if($outRocDS==1)$outRocDSName#{else}WORK._roc_temp#end noautolegend aspect=1;
+  title $CTMUtil.quoteString($ROCCurveLabel2);
+  xaxis label=$CTMUtil.quoteString($Falsepositiverate) values=(0 to 1 by $MathTool.roundTo(2,$MathTool.div(1,$cutoffStepCombo)));
+  yaxis label=$CTMUtil.quoteString($Truepositiverate) values=(0 to 1 by $MathTool.roundTo(2,$MathTool.div(1,$cutoffStepCombo)));
+  lineparm x=0 y=0 slope=1 / transparency=.7 LINEATTRS=(Pattern= 34);
+  series  x=fpr y=sensitivity;
+  inset "AUC=&AUC"/position = bottomright border;
+run;
+#end
+
+### Lift Chart for nominal target
+#if($plotResponseChart==1)
+/* $addOneRowComment*/
+data WORK._extraPoint;
+   depth=0;
+   CumResp=0;
+run;   
+data #if($outLiftInfoDS==1)$outLiftInfoDSName#{else}WORK._lift_temp#end;
+    set WORK._extraPoint #if($outLiftInfoDS==1)$outLiftInfoDSName#{else}WORK._lift_temp#end;
+run;
+#end
+
+#if($targetType == 'useNominalTarget' && $plotLiftChart == 1)
+#set( $LiftChartLabel1 = $LiftChartLabel.replace("{1}", "$categoricalTarget[0].get('value')") )
+#set( $LiftChartLabel2 = $LiftChartLabel1.replace("{2}", "$eventLevel") )
+proc sgplot data=#if($outLiftInfoDS==1)$outLiftInfoDSName#{else}WORK._lift_temp#end noautolegend;
+  title $CTMUtil.quoteString($LiftChartLabel2);
+  xaxis label=$CTMUtil.quoteString($PopulationPercentage) ;
+  yaxis label=$CTMUtil.quoteString($Lift);
+  series  x=depth y=lift;
+run;
+#end
+
+#if($targetType == 'useNominalTarget' && $plotCumulativeLiftChart == 1)
+#set( $CumulativeLiftChartLabel1 = $CumulativeLiftChartLabel.replace("{1}", "$categoricalTarget[0].get('value')") )
+#set( $CumulativeLiftChartLabel2 = $CumulativeLiftChartLabel1.replace("{2}", "$eventLevel") )
+proc sgplot data=#if($outLiftInfoDS==1)$outLiftInfoDSName#{else}WORK._lift_temp#end noautolegend;
+  title $CTMUtil.quoteString($CumulativeLiftChartLabel2);
+  xaxis label=$CTMUtil.quoteString($PopulationPercentage) ;
+  yaxis label=$CTMUtil.quoteString($Lift);
+  series  x=depth y=CumLift;
+run;
+#end
+
+#if($targetType == 'useNominalTarget' && $plotResponseChart == 1)
+#set( $CumulativeResponseRate1 = $CumulativeResponseRate.replace("{1}", "$categoricalTarget[0].get('value')") )
+#set( $CumulativeResponseRate2 = $CumulativeResponseRate1.replace("{2}", "$eventLevel") )
+proc sgplot data=#if($outLiftInfoDS==1)$outLiftInfoDSName#{else}WORK._lift_temp#end noautolegend  aspect=1;
+  title $CTMUtil.quoteString($CumulativeResponseRate2);
+  xaxis label=$CTMUtil.quoteString($PopulationPercentage) ;
+  yaxis label=$CTMUtil.quoteString($ResponsePercentage);
+  series  x=depth y=CumResp;
+  lineparm x=0 y=0 slope=1 / transparency=.7 LINEATTRS=(Pattern= 34);
+run;
+#end
+
+### Lift Chart for interval target
+#if($targetType != 'useNominalTarget' && $plotLiftChart == 1)
+#set( $RegressionLiftChartLabel1 = $RegressionLiftChartLabel.replace("{1}", "$continuousTarget[0].get('value')") )
+proc sgplot data=#if($outLiftInfoDS==1)$outLiftInfoDSName#{else}WORK._lift_temp#end noautolegend;
+  title $CTMUtil.quoteString($RegressionLiftChartLabel1);
+  xaxis label=$CTMUtil.quoteString($Populationpercentile) ;
+  yaxis label=$CTMUtil.quoteString($Response);
+  series  x=depth y=meanT /lineattrs=(color=very_light_blue);
+  band    x=depth lower=minT upper=maxT / transparency=0.5 legendlabel=$CTMUtil.quoteString($LegendLabelTarget) name="tband" fillattrs=(color=very_light_blue);
+  series  x=depth y=meanP /lineattrs=(color=dark_green);
+  band    x=depth lower=minP upper=maxP / transparency=0.5 legendlabel=$CTMUtil.quoteString($LegendLabelPredicted) name="pband" fillattrs=(color=dark_green);
+  keylegend "tband" "pband" / across=4  noborder position=TopRight location=inside;
+run;
+#end
+
+### Delete temporary tables
+#if($plotResponseChart == 1 || (($plotLiftChart == 1 || $plotResponseChart == 1 || $plotCumulativeLiftChart == 1) && $outLiftInfoDS != 1) || ($plotROCChart == 1 && $outRocDS!=1) )
+proc delete data= 
+    #if($plotResponseChart == 1)WORK._extraPoint #end
+    #if(($plotLiftChart == 1 || $plotResponseChart == 1 || $plotCumulativeLiftChart == 1) && $outLiftInfoDS!=1)WORK._lift_temp #end 
+    #if($plotROCChart == 1 && $outRocDS!=1)WORK._roc_temp #end
+    ;
+run;
+
+#end
+
+]]></CodeTemplate>
+    <TemplateValues version="4.2"><![CDATA[
+{"delimiterLabel":"Delimiter in level list:","LegendLabelTarget":"Target","percentileOptionsGroup":"LIFT ANALYSIS","useIntervalTarget":"0","sasOS":"Linux LIN X64 4.1.12-61.1.22.el7uek.x86_64","dataTab":"DATA","Lift":"Lift","maxiterRadioCustom":"0","delimiterRadioDefault":"1","eventLevel":"1","CumulativeLiftChartLabel":"Cumulative Lift Chart (Target = {1}, Event = {2})","predictedVar":"","pvarGroup":"Posterior Probabilities","delimiter":",","percentStep05":"Semi-decile","regexFrom":"[^A-Za-z0-9]","regexTo":"_","PopulationPercentage":"Population Percentage","LegendLabelPredicted":"Predicted","eventVarMappingRadio":"eventVarMappingRadioPattern","outLiftInfoDSName":"lift","outRocDS":"","RegressionLiftChartLabel":"Regression Lift Chart (Target = {1})","specifyAssessPartition":"0","maxiter":"50","outFitDSName":"fitStat","dataLabel":"Specify scored CAS table:","maxiterRadioDefault":"1","byVariables":"","useNominalTarget":"1","Truepositiverate":"True positive rate","specifyPattern":"0","categoricalTarget":"json:[{\"value\":\"arrest_code\",\"type\":\"Numeric\",\"length\":8,\"format\":\"F8.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","ROCCurveLabel":"ROC Curve (Target = {1}, Event = {2})","delimiterRadio":"delimiterRadioDefault","eventProbVar":"json:[{\"value\":\"P_arrest_code1\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","freqVariable":"","cutoffStepCombo":"10","percentStep1":"Decile (default)","eventVarMappingLabel":"Specify posterior probabilities for non-event target levels:","plotsGroup":"PLOTS","maxiterRadio":"maxiterRadioDefault","cutoffStep1":"0.1 (default)","plotResponseChart":"0","cutoffStep2":"0.2","plotLiftChart":"1","produceFitStat":"1","plotCumulativeLiftChart":"0","Populationpercentile":"Population percentile","rocOptionsGroup":"ROC ANALYSIS","cutoffStep02":"0.02","plotROCChart":"1","cutoffStep01":"0.01","eventVarMappingRadioCustom":"0","delimiterMsg":"Fit statistics cannot be generated because no valid delimiter for target levels is detected.  Edit the code and specify a delimiter that does not appear in any of the target levels.","delimiterRadioCustom":"0","cutoffStep05":"0.05","outLiftInfoDS":"","cutoffStep04":"0.04","continuousTarget":"","rolesGroup":"ROLES","fitStatOptionsGroup":"FIT STATISTICS","addOneRowComment":"Add a row in lift information table for depth of 0.","maxiterLabel":"Maximum number of iterations:","nonEventMapping":{"rows":{"values":[{"id":1,"pevent":null,"pvar":null}]},"columns":{"pevent":{"values":[null],"isValid":"1","numValues":0},"pvar":{"values":[null],"isValid":"1","numValues":0}}},"percentStepCombo":"10","CumulativeResponseRate":"Cumulative Response Rate (Target = {1}, Event = {2})","otherRolesGroup":"ADDITIONAL ROLES","varNotExistsMsg":"Variable does not exist in input dataset:","plotPartition":"","targetType":"useNominalTarget","LiftChartLabel":"Lift Chart (Target = {1}, Event = {2})","eventVarMappingRadioPattern":"1","outFitDS":"","pvarMsg":"Fit statistics cannot be generated because no posterior probability variables for non-event levels are detected.  Assign posterior probability variables on the OPTIONS tab.","Response":"Response","dataGroup":"DATA","odsOutputLibrefNote":"The following data sets must use a SAS libref.","sasVersion":"3.02","convergenceGroup":"Percentile Analysis","outRocDSName":"roc","ResponsePercentage":"Response Percentage","assessGroup":"OUTPUT DATA","assessPartition":"","outputTab":"OUTPUT","optionsTab":"OPTIONS","dataset":{"librarytable":"MYCAS.AP_SCORED_TREESPLIT"},"Falsepositiverate":"False positive rate"}
+]]></TemplateValues>
+</Task>

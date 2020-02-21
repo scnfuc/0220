@@ -1,0 +1,1298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="6.2">
+    <Registration>
+        <Name>Decision Tree</Name>
+        <Description>The Decision Tree task builds tree-based statistical models for classification and regression.</Description>
+        <GUID>3989a2c9-d307-4852-b149-312e8e930276</GUID>
+        <Procedures>TREESPLIT</Procedures>
+        <Version>4.2</Version>
+        <Links>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=stat_treesplit&amp;requestor=inapp">The TREESPLIT Procedure</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/training/viyasdmml">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <!-- where="true" removed for 16w17: not supported -->
+            <DataSource libraryEngineInclude="CAS" name="dataset">
+                <Roles>
+                    <Role
+                        exclude="intervalVariables,ordinalVariables,nominalVariables,freqVariable,partitionVariable"
+                        maxVars="1" minVars="1" name="categoricalTarget" type="A">Nominal target:</Role>
+                    <Role
+                        exclude="intervalVariables,ordinalVariables,nominalVariables,freqVariable,partitionVariable"
+                        maxVars="1" minVars="1" name="continuousTarget" type="N">Interval target:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,ordinalVariables,nominalVariables,freqVariable,partitionVariable"
+                        maxVars="0" minVars="0" name="intervalVariables"
+                        order="true" type="N">Interval inputs:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,intervalVariables,nominalVariables,freqVariable,partitionVariable"
+                        maxVars="0" minVars="0" name="ordinalVariables"
+                        order="true" type="N">Ordinal inputs:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,intervalVariables,ordinalVariables,freqVariable,partitionVariable"
+                        maxVars="0" minVars="0" name="nominalVariables"
+                        order="true" type="A">Nominal inputs:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,intervalVariables,ordinalVariables,nominalVariables,partitionVariable"
+                        maxVars="1" minVars="0" name="freqVariable" type="N">Frequency count:</Role>
+                    <Role
+                        exclude="categoricalTarget,continuousTarget,intervalVariables,ordinalVariables,nominalVariables,freqVariable"
+                        indent="1" maxVars="1" minVars="1"
+                        name="partitionVariable" type="A">Partitioning variable:</Role>
+                    <Role indent="2" maxVars="0" minVars="1"
+                        name="copyVariables" type="A">Include these variables:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="optionsTab">OPTIONS</Option>
+            <Option inputType="string" name="dataGroup">DATA</Option>
+            <Option inputType="string" name="rolesGroup">ROLES</Option>
+            <Option inputType="string" name="otherRolesGroup">ADDITIONAL ROLES</Option>
+            <Option inputType="string" name="partitionGroup">Partition Data</Option>
+            <Option inputType="string" name="inputDataLabel">Input data contains training data. Include:</Option>
+            <Option inputType="checkbox" name="testDataChoice">Test data</Option>
+            <Option inputType="checkbox" name="validationDataChoice">Validation data</Option>
+            <Option indent="1" inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set"
+                maxValue="0.9999999999" minValue="0.0000000001"
+                missingMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set"
+                name="trainingDataFraction"
+                promptMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set"
+                rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set"
+                required="true" width="100px">Proportion of training cases:</Option>
+            <Option indent="1" inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set"
+                maxValue="0.9999999999" minValue="0.0000000001"
+                missingMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set"
+                name="testDataFraction"
+                promptMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set"
+                rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set"
+                required="true" width="100px">Proportion of testing cases:</Option>
+            <Option indent="1" inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set"
+                maxValue="0.9999999999" minValue="0.0000000001"
+                missingMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set"
+                name="validationDataFraction"
+                promptMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set"
+                rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set"
+                required="true" width="100px">Proportion of validation cases:</Option>
+            <Option defaultValue="0" inputType="checkbox" name="useRandomSeed">Random number seed</Option>
+            <Option decimalPlaces="0" indent="1" inputType="numbertext"
+                invalidMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                maxValue="2147483647" minValue="1"
+                missingMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                name="randomSeed"
+                promptMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                rangeMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                required="true" width="100px">Random seed:</Option>
+            <Option indent="1" inputType="string" name="partitionRandomSeedNote">Specifying a random number seed may not replicate results in a distributed computing environment.</Option>
+            <Option defaultValue="partitionDataFractionChoice"
+                inputType="combobox" name="partitionDataCombo">Identify partitions:</Option>
+            <Option inputType="string" name="partitionDataFractionChoice">Specify a sample proportion</Option>
+            <Option inputType="string" name="partitionDataVariableChoice">Choose a value of a partitioning variable</Option>
+            <Option indent="2" inputType="distinct"
+                name="validationLevelCombo" required="true" source="partitionVariable">Validation data value:</Option>
+            <Option indent="2" inputType="distinct"
+                name="testLevelCombo" required="true" source="partitionVariable">Test data value:</Option>
+            <Option indent="2" inputType="checkbox" name="useTrainingLevel">Select training data value</Option>
+            <Option indent="2" inputType="distinct"
+                name="trainingLevelCombo" required="true" source="partitionVariable">Training data value:</Option>
+            <Option inputType="string" name="targetGroup">Target</Option>
+            <Option inputType="string" name="inputsGroup">Inputs</Option>
+            <Option inputType="radio" name="useIntervalTarget" variable="targetType">Use an interval target</Option>
+            <Option defaultValue="1" inputType="radio"
+                name="useNominalTarget" variable="targetType">Use a nominal target</Option>
+            <Option indent="1" inputType="distinct" name="eventCombo"
+                required="true" selectMessage="Select a level" source="categoricalTarget">Event of interest:</Option>
+            <Option inputType="string" name="methodsGroup">METHODS</Option>
+            <Option inputType="string" name="treeOptionGroup">Creating a Tree</Option>
+            <Option inputType="string" name="nodeOptionGroup">Splitting a Node</Option>
+            <Option inputType="string" name="pruneOptionGroup">Pruning a Tree</Option>
+            <Option defaultValue="igrChoice" inputType="combobox"
+                name="catGrowthMethod" width="200px">Splitting criterion:</Option>
+            <Option defaultValue="rssChoice" inputType="combobox"
+                name="contGrowthMethod" width="200px">Splitting criterion:</Option>
+            <Option inputType="string" name="chaidChoice" returnValue="chaidChoice">CHAID</Option>
+            <Option inputType="string" name="chisqChoice" returnValue="chisqChoice">Chi-square</Option>
+            <Option inputType="string" name="entropyChoice" returnValue="entropyChoice">Entropy</Option>
+            <Option inputType="string" name="giniChoice" returnValue="giniChoice">Gini index</Option>
+            <Option inputType="string" name="ftestChoice" returnValue="ftestChoice">F statistic</Option>
+            <Option inputType="string" name="rssChoice" returnValue="rssChoice">Change in response variance (default)</Option>
+            <Option inputType="string" name="igrChoice" returnValue="igrChoice">Information gain ratio (default)</Option>
+            <Option inputType="string" name="fastChaidChoice" returnValue="fastChaidChoice">Fast CHAID</Option>
+            <Option inputType="checkbox" name="bonferroni">Use Bonferroni adjustment to p-value</Option>
+            <Option inputType="checkbox" name="usePvalue">P-value to determine the splitting variable</Option>
+            <Option decimalPlaces="1,15" defaultValue="0.3"
+                inputType="numbertext"
+                invalidMessage="Enter a number greater than 0 and less than 1 for the p-value"
+                maxValue="0.99999999999" minValue="0.00000000001"
+                missingMessage="Enter a number greater than 0 and less than 1 for the p-value"
+                name="pvalue"
+                promptMessage="Enter a number greater than 0 and less than 1 for the p-value"
+                rangeMessage="Enter a number greater than 0 and less than 1 for the p-value"
+                required="true" width="75px">P-value to determine the splitting variable:</Option>
+            <Option inputType="checkbox" name="useMinEntropy">Minimum entropy</Option>
+            <Option decimalPlaces="0,15" defaultValue="0"
+                inputType="numbertext"
+                invalidMessage="Enter a number greater than or equal to 0 for the minimum entropy"
+                minValue="0"
+                missingMessage="Enter a number greater than or equal to 0 for the minimum entropy"
+                name="minEntropy"
+                promptMessage="Enter a number greater than or equal to 0 for the minimum entropy"
+                rangeMessage="Enter a number greater than or equal to 0 for the minimum entropy"
+                required="true" width="75px">Minimum entropy:</Option>
+            <Option inputType="checkbox" name="useMinDist">Specify minimum Kolmogorov-Smirnoff distance for a split</Option>
+            <Option defaultValue="0.01" inputType="numbertext"
+                invalidMessage="Enter a number greater than 0 for the minimum Kolmogorov-Smirnoff distance"
+                minValue="0.00000000001"
+                missingMessage="Enter a number greater than 0 for the minimum Kolmogorov-Smirnoff distance"
+                name="minDist"
+                promptMessage="Enter a number greater than 0 for the minimum Kolmogorov-Smirnoff distance"
+                rangeMessage="Enter a number greater than 0 for the minimum Kolmogorov-Smirnoff distance"
+                required="true" width="75px">Minimum Kolmogorov-Smirnoff distance:</Option>
+            <Option defaultValue="noPruningChoice" inputType="combobox"
+                name="contPruneMethod" width="200px">Pruning method:</Option>
+            <Option defaultValue="noPruningChoice" inputType="combobox"
+                name="catPruneMethod" width="200px">Pruning method:</Option>
+            <Option defaultValue="noPruningChoice" inputType="combobox"
+                name="contNoValidationPruneMethod" width="200px">Pruning method:</Option>
+            <Option defaultValue="noPruningChoice" inputType="combobox"
+                name="catNoValidationPruneMethod" width="200px">Pruning method:</Option>
+            <Option inputType="string" name="c45Choice">C4.5 pruning</Option>
+            <Option inputType="string" name="costChoice">Cost complexity pruning</Option>
+            <Option inputType="string" name="reducedErrorChoice">Reduced error pruning</Option>
+            <Option inputType="string" name="noPruningChoice">No pruning (default)</Option>
+            <Option inputType="checkbox" name="useConfidence">Pruning confidence level</Option>
+            <Option decimalPlaces="1,15" defaultValue="0.25" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter a number greater than 0 and less than 1 for the pruning confidence level"
+                maxValue="0.99999999999" minValue="0.00000000001"
+                missingMessage="Enter a number greater than 0 and less than 1 for the pruning confidence level"
+                name="pruningConfidence"
+                promptMessage="Enter a number greater than 0 and less than 1 for the pruning confidence level"
+                rangeMessage="Enter a number greater than 0 and less than 1 for the pruning confidence level"
+                required="true" width="75px">Pruning confidence level:</Option>
+            <Option defaultValue="kfoldChoice" indent="1"
+                inputType="combobox" name="pruneBy">Prune by:</Option>
+            <Option inputType="string" name="leavesChoice">Select subtree by number of leaves</Option>
+            <Option inputType="string" name="alphaChoice">Select subtree by cost complexity value</Option>
+            <Option inputType="string" name="kfoldChoice">Cross validation</Option>
+            <Option decimalPlaces="0" defaultValue="25" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 for the number of leaves"
+                maxValue="999999999" minValue="1"
+                missingMessage="Enter an integer greater than 0 for the number of leaves"
+                name="nLeaves"
+                promptMessage="Enter an integer greater than 0 for the number of leaves"
+                rangeMessage="Enter an integer greater than 0 for the number of leaves"
+                required="true" width="75px">Number of leaves:</Option>
+            <Option decimalPlaces="0" defaultValue="10" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 2 and less than or equal to 1000 for the number of folds"
+                maxValue="1000" minValue="2"
+                missingMessage="Enter an integer greater than or equal to 2 and less than or equal to 1000 for the number of folds"
+                name="kfold"
+                promptMessage="Enter an integer greater than or equal to 2 and less than or equal to 1000 for the number of folds"
+                rangeMessage="Enter an integer greater than or equal to 2 and less than or equal to 1000 for the number of folds"
+                required="true" width="100px">Number of cross validation folds(k):</Option>
+            <Option indent="1" inputType="checkbox" name="cvcc">Show cross-validated cost complexity results</Option>
+            <Option decimalPlaces="1,15" defaultValue="0.3" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter a number greater than 0 and less than 1 for the cost complexity value"
+                maxValue="0.99999999999" minValue="0.0000000001"
+                missingMessage="Enter a number greater than 0 and less than 1 for the cost complexity value"
+                name="ccValue"
+                promptMessage="Enter a number greater than 0 and less than 1 for the cost complexity value"
+                rangeMessage="Enter a number greater than 0 and less than 1 for the cost complexity value"
+                required="true" width="75px">Cost complexity value:</Option>
+            <Option inputType="checkbox" name="useIntervalBins">Number of bins for interval inputs</Option>
+            <Option decimalPlaces="0" defaultValue="20" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than 1 and not greater than 500 for the number of bins for interval inputs"
+                maxValue="500" minValue="2"
+                missingMessage="Enter an integer greater than 1 and not greater than 500 for the number of bins for interval inputs"
+                name="intervalBins"
+                promptMessage="Enter an integer greater than 1 and not greater than 500 for the number of bins for interval inputs"
+                rangeMessage="Enter an integer greater than 1 and not greater than 500 for the number of bins for interval inputs"
+                required="true" width="100px">Number of bins:</Option>
+            <Option defaultValue="1" inputType="checkbox" name="useNumbinsRange">Autotune number of bins</Option>
+            <Option decimalPlaces="0" defaultValue="20" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 1 and not greater than 500 for the initial value of the number of bins for interval inputs"
+                maxValue="500" minValue="2"
+                missingMessage="Enter an integer greater than 1 and not greater than 500 for the initial value of the number of bins for interval inputs"
+                name="initialNumbins"
+                promptMessage="Enter an integer greater than 1 and not greater than 500 for the initial value of the number of bins for interval inputs"
+                rangeMessage="Enter an integer greater than 1 and not greater than 500 for the initial value of the number of bins for interval inputs"
+                required="true" width="75px">Initial value:</Option>
+            <Option decimalPlaces="0" defaultValue="20" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 1 and not greater than 500 for the lower bound of the number of bins for interval inputs"
+                maxValue="500" minValue="2"
+                missingMessage="Enter an integer greater than 1 and not greater than 500 for the lower bound of the number of bins for interval inputs"
+                name="lowerNumbins"
+                promptMessage="Enter an integer greater than 1 and not greater than 500 for the lower bound of the number of bins for interval inputs"
+                rangeMessage="Enter an integer greater than 1 and not greater than 500 for the lower bound of the number of bins for interval inputs"
+                required="true" width="75px">Lower bound:</Option>
+            <Option decimalPlaces="0" defaultValue="200" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 1 and not greater than 500 for the upper bound of the number of bins for interval inputs"
+                maxValue="500" minValue="2"
+                missingMessage="Enter an integer greater than 1 and not greater than 500 for the upper bound of the number of bins for interval inputs"
+                name="upperNumbins"
+                promptMessage="Enter an integer greater than 1 and not greater than 500 for the upper bound of the number of bins for interval inputs"
+                rangeMessage="Enter an integer greater than 1 and not greater than 500 for the upper bound of the number of bins for interval inputs"
+                required="true" width="75px">Upper bound:</Option>
+            <Option decimalPlaces="0" defaultValue="6" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 and not greater than 150 for the maximum depth of a node in a tree"
+                maxValue="150" minValue="1"
+                missingMessage="Enter an integer greater than 0 and not greater than 150 for the maximum depth of a node in a tree"
+                name="maxDepth"
+                promptMessage="Enter an integer greater than 0 and not greater than 150 for the maximum depth of a node in a tree"
+                rangeMessage="Enter an integer greater than 0 and not greater than 150 for the maximum depth of a node in a tree"
+                required="true" width="75px">Maximum depth of the tree:</Option>
+            <Option defaultValue="1" inputType="checkbox" name="useMaxDepthRange">Autotune depth of tree</Option>
+            <Option decimalPlaces="0" defaultValue="10" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 and not greater than 150 for the initial value of the depth of a node in a tree"
+                maxValue="150" minValue="1"
+                missingMessage="Enter an integer greater than 0 and not greater than 150 for the initial value of the depth of a node in a tree"
+                name="initialDepth"
+                promptMessage="Enter an integer greater than 0 and not greater than 150 for the initial value of the depth of a node in a tree"
+                rangeMessage="Enter an integer greater than 0 and not greater than 150 for the initial value of the depth of a node in a tree"
+                required="true" width="75px">Initial value:</Option>
+            <Option decimalPlaces="0" defaultValue="1" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 and not greater than 150 for the lower bound of the depth of a node in a tree"
+                maxValue="150" minValue="1"
+                missingMessage="Enter an integer greater than 0 and not greater than 150 for the lower bound of the depth of a node in a tree"
+                name="lowerDepth"
+                promptMessage="Enter an integer greater than 0 and not greater than 150 for the lower bound of the depth of a node in a tree"
+                rangeMessage="Enter an integer greater than 0 and not greater than 150 for the lower bound of the depth of a node in a tree"
+                required="true" width="75px">Lower bound:</Option>
+            <Option decimalPlaces="0" defaultValue="19" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 and not greater than 150 for the upper bound of the depth of a node in a tree"
+                maxValue="150" minValue="1"
+                missingMessage="Enter an integer greater than 0 and not greater than 150 for the upper bound of the depth of a node in a tree"
+                name="upperDepth"
+                promptMessage="Enter an integer greater than 0 and not greater than 150 for the upper bound of the depth of a node in a tree"
+                rangeMessage="Enter an integer greater than 0 and not greater than 150 for the upper bound of the depth of a node in a tree"
+                required="true" width="75px">Upper bound:</Option>
+            <Option decimalPlaces="0" defaultValue="2" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 2 and not greater than 6 for the maximum number of branches for a node in a tree"
+                maxValue="6" minValue="2"
+                missingMessage="Enter an integer greater than or equal to 2 and not greater than 6 for the maximum number of branches for a node in a tree"
+                name="maxBranches"
+                promptMessage="Enter an integer greater than or equal to 2 and not greater than 6 for the maximum number of branches for a node in a tree"
+                rangeMessage="Enter an integer greater than or equal to 2 and not greater than 6 for the maximum number of branches for a node in a tree"
+                required="true" width="75px">Maximum branches of a node:</Option>
+            <Option decimalPlaces="0" defaultValue="5" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 for the minimum number of observations for a leaf"
+                maxValue="999999999" minValue="1"
+                missingMessage="Enter an integer greater than 0 for the minimum number of observations for a leaf"
+                name="minLeafSize"
+                promptMessage="Enter an integer greater than 0 for the minimum number of observations for a leaf"
+                rangeMessage="Enter an integer greater than 0 for the minimum number of observations for a leaf"
+                required="true" width="75px">Minimum observations for a leaf:</Option>
+            <Option inputType="string" name="autotuneGroup">Autotune Settings</Option>
+            <Option inputType="checkbox" name="autotune">Automatically tune selected options</Option>
+            <Option indent="1" inputType="string" name="autotuneTimeNote">Note: Expect a considerably longer run time (read more)</Option>
+            <Option inputType="string" name="autotuneReadMore">The autotuning process explores many different combinations of algorithm options, training a model for each combination (and multiple models when using cross-validation).  In an effort to find the best model, some of these combinations will be configurations that take a long time to train.  The overall time it takes to find the best model will vary and you should expect this process to take significantly longer than training a single model.</Option>
+            <Option inputType="combobox" name="autotuneCombo" width="200px">Validation method:</Option>
+            <Option inputType="string" name="autoPartitionChoice">Partition</Option>
+            <Option inputType="string" name="autoCVChoice">K-fold cross-validation</Option>
+            <Option defaultValue="0.3" indent="1" inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set"
+                maxValue="0.9999999999" minValue="0.0000000001"
+                missingMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set"
+                name="autoValidationFraction"
+                promptMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set"
+                rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set"
+                required="true" width="50px">Proportion of validation cases:</Option>
+            <Option decimalPlaces="0" defaultValue="5" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 2 and less than or equal to 20 for the number of folds"
+                maxValue="20" minValue="2"
+                missingMessage="Enter an integer greater than or equal to 2 and less than or equal to 20 for the number of folds"
+                name="autoNFolds"
+                promptMessage="Enter an integer greater than or equal to 2 and less than or equal to 20 for the number of folds"
+                rangeMessage="Enter an integer greater than or equal to 2 and less than or equal to 20 for the number of folds"
+                required="true" width="50px">Number of folds:</Option>
+            <Option decimalPlaces="0,15" defaultValue="60" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter a number greater than or equal to 1 for the maximum time in minutes"
+                maxValue="999999999" minValue="1"
+                missingMessage="Enter a number greater than or equal to 1 for the maximum time in minutes"
+                name="autoMaxtime"
+                promptMessage="Enter a number greater than or equal to 1 for the maximum time in minutes"
+                rangeMessage="Enter a number greater than or equal to 1 for the maximum time in minutes"
+                required="true" width="50px">Maximum time (in minutes):</Option>
+            <Option decimalPlaces="0" defaultValue="5" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 1 for the maximum number of iterations"
+                maxValue="999999999" minValue="1"
+                missingMessage="Enter an integer greater than or equal to 1 for the maximum number of iterations"
+                name="autoMaxiter"
+                promptMessage="Enter an integer greater than or equal to 1 for the maximum number of iterations"
+                rangeMessage="Enter an integer greater than or equal to 1 for the maximum number of iterations"
+                required="true" width="50px">Maximum iterations:</Option>
+            <Option defaultValue="gaSearchChoice" inputType="combobox" name="autoSearchMethod">Search method:</Option>
+            <Option inputType="string" name="gaSearchChoice">Genetic algorithm</Option>
+            <Option inputType="string" name="lhsSearchChoice">Latin hypercube sample</Option>
+            <Option inputType="string" name="randomSearchChoice">Random sample</Option>
+            <Option decimalPlaces="0" defaultValue="50" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 1 for the sample size"
+                maxValue="999999999" minValue="2"
+                missingMessage="Enter an integer greater than 1 for the sample size"
+                name="autoSampleSize"
+                promptMessage="Enter an integer greater than 1 for the sample size"
+                rangeMessage="Enter an integer greater than 1 for the sample size"
+                required="true" width="75px">Sample size:</Option>
+            <Option defaultValue="autotuneMiscChoice"
+                inputType="combobox" name="autoNominalObjective">Objective:</Option>
+            <Option defaultValue="autotuneASEChoice"
+                inputType="combobox" name="autoIntervalObjective">Objective:</Option>
+            <Option inputType="string" name="autotuneASEChoice">Average square error</Option>
+            <Option inputType="string" name="autotuneAUCChoice">Area under curve</Option>
+            <Option inputType="string" name="autotuneF1Choice">F1 score</Option>
+            <Option inputType="string" name="autotuneF05Choice">F0.5 score</Option>
+            <Option inputType="string" name="autotuneGammaChoice">Goodman-Kruskal gamma</Option>
+            <Option inputType="string" name="autotuneGiniChoice">Gini's coefficient</Option>
+            <Option inputType="string" name="autotuneMCLLChoice">Multi-class log loss</Option>
+            <Option inputType="string" name="autotuneMiscChoice">Misclassification rate</Option>
+            <Option inputType="string" name="autotuneRaseChoice">Root average square error</Option>
+            <Option inputType="string" name="autotuneTauChoice">Kendall's Tau-a</Option>
+            <Option inputType="string" name="autotuneMAEChoice">Mean absolute error</Option>
+            <Option inputType="string" name="autotuneMSLEChoice">Mean square logarithmic error</Option>
+            <Option inputType="string" name="autotuneRMAEChoice">Root mean absolute error</Option>
+            <Option inputType="string" name="autotuneRMSLEChoice">Root mean square logarithmic error</Option>
+            <Option inputType="string" name="autotuneKSChoice">Kolmogorov-Smirnov statistic</Option>
+            <Option defaultValue="autoUseFirstLevelChoice"
+                inputType="combobox" name="autoTargetEventCombo">Event of interest:</Option>
+            <Option inputType="string" name="autoUseFirstLevelChoice">Use first target value</Option>
+            <Option inputType="string" name="autoSelectLevelChoice">Select target value</Option>
+            <Option indent="1" inputType="distinct"
+                name="autoEventCombo" required="true"
+                selectMessage="Select a level" source="categoricalTarget">Selected event:</Option>
+            <Option inputType="checkbox" name="useAutoNParallel">Set number of parallel evaluations</Option>
+            <Option decimalPlaces="0" defaultValue="2" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 1 for the number of parallel evaluations"
+                maxValue="999999999" minValue="1"
+                missingMessage="Enter an integer greater than or equal to 1 for the number of parallel evaluations"
+                name="autoNParallel"
+                promptMessage="Enter an integer greater than or equal to 1 for the number of parallel evaluations"
+                rangeMessage="Enter an integer greater than or equal to 1 for the number of parallel evaluations"
+                required="true" width="50px">Parallel evaluations:</Option>
+            <Option inputType="string" name="autotuneDetailsGroup">Genetic Algorithm Settings</Option>
+            <Option inputType="string" name="setMaxValuesLabel3">Set maximum values:</Option>
+            <Option decimalPlaces="0" defaultValue="50" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 3 for the maximum number of evaluations"
+                maxValue="999999999" minValue="3"
+                missingMessage="Enter an integer greater than or equal to 3 for the maximum number of evaluations"
+                name="autoMaxevals"
+                promptMessage="Enter an integer greater than or equal to 3 for the maximum number of evaluations"
+                rangeMessage="Enter an integer greater than or equal to 3 for the maximum number of evaluations"
+                required="true" width="50px">Maximum evaluations:</Option>
+            <Option decimalPlaces="0" defaultValue="10" increment="1"
+                inputType="numstepper"
+                invalidMessage="Enter an integer greater than or equal to 2 for the number of evaluations per iteration"
+                maxValue="999999999" minValue="2"
+                missingMessage="Enter an integer greater than or equal to 2 for the number of evaluations per iteration"
+                name="autoPopsize"
+                promptMessage="Enter an integer greater than or equal to 2 for the number of evaluations per iteration"
+                rangeMessage="Enter an integer greater than or equal to 2 for the number of evaluations per iteration"
+                required="true" width="50px">Evaluations per iteration:</Option>
+            <Option defaultValue="1" inputType="checkbox"
+                name="useGrowthSelector" required="true">Autotune splitting criteria</Option>
+            <Option
+                defaultValue="igrChoice,chaidChoice,chisqChoice,entropyChoice,giniChoice"
+                indent="1" inputType="dualselector"
+                name="catGrowthSelector" required="true">Splitting criteria:</Option>
+            <Option defaultValue="rssChoice,chaidChoice,ftestChoice"
+                indent="1" inputType="dualselector"
+                name="contGrowthSelector" required="true">Splitting criteria:</Option>
+            <Option inputType="string" name="plotsGroup">PLOTS</Option>
+            <Option defaultValue="defaultPlotChoice"
+                inputType="combobox" name="plotsCombo">Select plots to display:</Option>
+            <Option inputType="string" name="defaultPlotChoice">Default plots</Option>
+            <Option inputType="string" name="customPlotChoice">Selected plots</Option>
+            <Option inputType="string" name="noplotsChoice">Suppress plots</Option>
+            <Option defaultValue="1" indent="1" inputType="checkbox" name="wholeTree">Whole tree</Option>
+            <Option defaultValue="1" indent="1" inputType="checkbox" name="zoomedTree">Zoomed tree</Option>
+            <Option indent="1" inputType="checkbox" name="rocPlot">ROC plot</Option>
+            <Option indent="1" inputType="checkbox" name="variableImportancePlot">Variable importance chart</Option>
+            <Option inputType="string" name="variableImportancePlotTitle">Variable Importance</Option>
+            <Option indent="1" inputType="checkbox" name="cvccPlot">Cost complexity plot</Option>
+            <Option decimalPlaces="0" defaultValue="2" increment="1"
+                indent="2" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 for the depth of the subtree"
+                maxValue="999999999" minValue="1"
+                missingMessage="Enter an integer greater than 0 for the depth of the subtree"
+                name="plotDepth"
+                promptMessage="Enter an integer greater than 0 for the depth of the subtree"
+                rangeMessage="Enter an integer greater than 0 for the depth of the subtree"
+                required="true" width="100px">Depth of the subtree:</Option>
+            <!-- Output data set -->
+            <Option inputType="string" name="outputTab">OUTPUT</Option>
+            <Option inputType="string" name="outputGroup">OUTPUT DATA</Option>
+            <Option inputType="string" name="odsOutputLibrefNote">The following data set must use a SAS libref:</Option>
+            <Option inputType="string" name="casOutputLibrefNote">The following table must use a CAS engine libref:</Option>
+            <Option inputType="checkbox" name="outputDS">Save scored data</Option>
+            <Option indent="1" inputType="outputdata"
+                libraryEngineInclude="cas" name="outputDSName" required="true">Specify a CAS table:</Option>
+            <Option indent="1" inputType="string" name="includeVarsInstruction">Include variables from the input CAS table:</Option>
+            <Option indent="1" inputType="radio" name="includeAllVars" variable="includeVars">All variables</Option>
+            <Option indent="1" inputType="radio"
+                name="includeAnalysisVars" variable="includeVars">Variables used in the analysis</Option>
+            <Option indent="1" inputType="radio"
+                name="includeSelectedVars" variable="includeVars">Selected variables</Option>
+            <Option defaultValue="1" indent="1" inputType="radio"
+                name="includeNoVars" variable="includeVars">No variables</Option>
+            <Option inputType="checkbox" name="outVarImpDS">Save variable importance measures</Option>
+            <Option defaultValue="Treesplit_varimp" indent="1"
+                inputType="outputdata" libraryEngineInclude="v9"
+                name="outVarImpDSName" required="true">Specify a SAS data set:</Option>
+            <Option inputType="string" name="scoreCodeFileNote">Specify a path name for the scoring code:</Option>
+            <Option inputType="checkbox" name="scoreCode">Save scoring code</Option>
+            <!-- Note: The sasserverpath component is for internal use only -->
+            <Option defaultExtension="sas" defaultFileName="score"
+                indent="1" inputType="sasserverpath"
+                name="scoringCodeFileName" showFileName="true" width="100%"/>
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+                <Group open="true" option="partitionGroup">
+                    <OptionItem option="inputDataLabel"/>
+                    <OptionItem option="validationDataChoice"/>
+                    <OptionItem option="testDataChoice"/>
+                    <OptionChoice option="partitionDataCombo">
+                        <OptionItem option="partitionDataFractionChoice"/>
+                        <OptionItem option="partitionDataVariableChoice"/>
+                    </OptionChoice>
+                    <RoleItem role="partitionVariable"/>
+                    <OptionChoice option="validationLevelCombo"/>
+                    <OptionChoice option="testLevelCombo"/>
+                    <OptionItem option="useTrainingLevel"/>
+                    <OptionChoice option="trainingLevelCombo"/>
+                    <!--                    
+                    <OptionItem option="trainingDataFraction"/>
+-->
+                    <OptionItem option="validationDataFraction"/>
+                    <OptionItem option="testDataFraction"/>
+                    <OptionItem option="useRandomSeed"/>
+                    <OptionItem option="randomSeed"/>
+                    <OptionItem option="partitionRandomSeedNote"/>
+                </Group>
+            </Group>
+            <Group open="true" option="rolesGroup">
+                <Group open="true" option="targetGroup">
+                    <OptionItem option="useNominalTarget"/>
+                    <OptionItem option="useIntervalTarget"/>
+                    <RoleItem role="categoricalTarget"/>
+                    <!-- not used?
+                    <OptionChoice option="eventCombo">
+                    </OptionChoice>
+-->
+                    <RoleItem role="continuousTarget"/>
+                </Group>
+                <Group open="true" option="inputsGroup">
+                    <RoleItem role="intervalVariables"/>
+                    <RoleItem role="nominalVariables"/>
+                </Group>
+            </Group>
+            <Group option="otherRolesGroup">
+                <RoleItem role="freqVariable"/>
+            </Group>
+        </Container>
+        <Container option="optionsTab">
+            <Group open="true" option="methodsGroup">
+                <OptionItem option="autotune"/>
+                <Group option="autotuneTimeNote">
+                    <OptionItem option="autotuneReadMore"/>
+                </Group>
+                <OptionItem option="useMaxDepthRange"/>
+                <OptionItem option="maxDepth"/>
+                <OptionItem option="initialDepth"/>
+                <OptionItem option="lowerDepth"/>
+                <OptionItem option="upperDepth"/>
+                <OptionItem option="useNumbinsRange"/>
+                <OptionItem option="intervalBins"/>
+                <OptionItem option="initialNumbins"/>
+                <OptionItem option="lowerNumbins"/>
+                <OptionItem option="upperNumbins"/>
+                <OptionItem option="useGrowthSelector"/>
+                <OptionChoice option="catGrowthMethod">
+                    <OptionItem option="chaidChoice"/>
+                    <OptionItem option="chisqChoice"/>
+                    <OptionItem option="entropyChoice"/>
+                    <!-- not supported
+                        <OptionItem option="fastChaidChoice"/>
+                        -->
+                    <OptionItem option="giniChoice"/>
+                    <OptionItem option="igrChoice"/>
+                </OptionChoice>
+                <OptionChoice option="contGrowthMethod">
+                    <OptionItem option="chaidChoice"/>
+                    <OptionItem option="rssChoice"/>
+                    <OptionItem option="ftestChoice"/>
+                </OptionChoice>
+                <OptionChoice option="catGrowthSelector">
+                    <OptionItem option="chaidChoice"/>
+                    <OptionItem option="chisqChoice"/>
+                    <OptionItem option="entropyChoice"/>
+                    <OptionItem option="giniChoice"/>
+                    <OptionItem option="igrChoice"/>
+                </OptionChoice>
+                <OptionChoice option="contGrowthSelector">
+                    <OptionItem option="chaidChoice"/>
+                    <OptionItem option="rssChoice"/>
+                    <OptionItem option="ftestChoice"/>
+                </OptionChoice>
+                <OptionItem option="pvalue"/>
+                <OptionItem option="bonferroni"/>
+                <OptionItem option="minEntropy"/>
+                <OptionItem option="minDist"/>
+                <OptionChoice option="catPruneMethod">
+                    <OptionItem option="c45Choice"/>
+                    <OptionItem option="costChoice"/>
+                    <OptionItem option="reducedErrorChoice"/>
+                    <OptionItem option="noPruningChoice"/>
+                </OptionChoice>
+                <OptionChoice option="catNoValidationPruneMethod">
+                    <OptionItem option="c45Choice"/>
+                    <OptionItem option="costChoice"/>
+                    <!--
+                        <OptionItem option="reducedErrorChoice"/>
+                        -->
+                    <OptionItem option="noPruningChoice"/>
+                </OptionChoice>
+                <OptionItem option="pruningConfidence"/>
+                <OptionChoice option="contPruneMethod">
+                    <OptionItem option="costChoice"/>
+                    <OptionItem option="reducedErrorChoice"/>
+                    <OptionItem option="noPruningChoice"/>
+                </OptionChoice>
+                <OptionChoice option="contNoValidationPruneMethod">
+                    <OptionItem option="costChoice"/>
+                    <OptionItem option="noPruningChoice"/>
+                </OptionChoice>
+                <OptionChoice option="pruneBy">
+                    <OptionItem option="kfoldChoice"/>
+                    <OptionItem option="alphaChoice"/>
+                    <OptionItem option="leavesChoice"/>
+                </OptionChoice>
+                <OptionItem option="nLeaves"/>
+                <OptionItem option="ccValue"/>
+                <OptionItem option="kfold"/>
+                <OptionItem option="cvcc"/>
+                <OptionItem option="minLeafSize"/>
+                <OptionItem option="maxBranches"/>
+                <Group open="true" option="autotuneGroup">
+                    <OptionChoice option="autoSearchMethod">
+                        <OptionItem option="gaSearchChoice"/>
+                        <OptionItem option="lhsSearchChoice"/>
+                        <OptionItem option="randomSearchChoice"/>
+                    </OptionChoice>
+                    <Group option="autotuneDetailsGroup">
+                        <OptionItem option="autoMaxiter"/>
+                        <OptionItem option="autoMaxevals"/>
+                        <OptionItem option="autoPopsize"/>
+                    </Group>
+                    <OptionItem option="autoSampleSize"/>
+                    <OptionChoice option="autoNominalObjective">
+                        <OptionItem option="autotuneAUCChoice"/>
+                        <OptionItem option="autotuneASEChoice"/>
+                        <OptionItem option="autotuneF1Choice"/>
+                        <OptionItem option="autotuneF05Choice"/>
+                        <OptionItem option="autotuneGiniChoice"/>
+                        <OptionItem option="autotuneGammaChoice"/>
+                        <OptionItem option="autotuneTauChoice"/>
+                        <OptionItem option="autotuneKSChoice"/>
+                        <OptionItem option="autotuneMiscChoice"/>
+                        <OptionItem option="autotuneMCLLChoice"/>
+                        <OptionItem option="autotuneRaseChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="autoIntervalObjective">
+                        <OptionItem option="autotuneASEChoice"/>
+                        <OptionItem option="autotuneMAEChoice"/>
+                        <OptionItem option="autotuneMSLEChoice"/>
+                        <OptionItem option="autotuneRaseChoice"/>
+                        <OptionItem option="autotuneRMAEChoice"/>
+                        <OptionItem option="autotuneRMSLEChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="autoTargetEventCombo">
+                        <OptionItem option="autoUseFirstLevelChoice"/>
+                        <OptionItem option="autoSelectLevelChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="autoEventCombo"/>
+                    <OptionItem option="autoMaxtime"/>
+                    <OptionChoice option="autotuneCombo">
+                        <OptionItem option="autoPartitionChoice"/>
+                        <OptionItem option="autoCVChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="autoValidationFraction"/>
+                    <OptionItem option="autoNFolds"/>
+                    <OptionItem option="useAutoNParallel"/>
+                    <OptionItem option="autoNParallel"/>
+                </Group>
+            </Group>
+            <Group open="true" option="plotsGroup">
+                <OptionChoice option="plotsCombo">
+                    <OptionItem option="defaultPlotChoice"/>
+                    <OptionItem option="customPlotChoice"/>
+                    <OptionItem option="noplotsChoice"/>
+                </OptionChoice>
+                <OptionItem option="wholeTree"/>
+                <OptionItem option="zoomedTree"/>
+                <OptionItem option="plotDepth"/>
+                <OptionItem option="variableImportancePlot"/>
+                <OptionItem option="cvccPlot"/>
+            </Group>
+        </Container>
+        <Container option="outputTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="casOutputLibrefNote"/>
+                <OptionItem option="outputDS"/>
+                <OptionItem option="outputDSName"/>
+                <OptionItem option="includeVarsInstruction"/>
+                <OptionItem option="includeAllVars"/>
+                <OptionItem option="includeAnalysisVars"/>
+                <OptionItem option="includeNoVars"/>
+                <OptionItem option="includeSelectedVars"/>
+                <RoleItem role="copyVariables"/>
+                <OptionItem option="odsOutputLibrefNote"/>
+                <OptionItem option="outVarImpDS"/>
+                <OptionItem option="outVarImpDSName"/>
+                <OptionItem option="scoreCodeFileNote"/>
+                <OptionItem option="scoreCode"/>
+                <OptionItem option="scoringCodeFileName"/>
+            </Group>
+        </Container>
+    </UI>
+    <Dependencies>
+        <!-- Dependencies whose targets are used in conditions of dependencies -->
+        <!-- These dependencies must precede the dependencies that use one of these targets in a dependency condition -->
+        <Dependency condition="($autotune == 1)">
+            <Target action="show" conditionResult="true" option="autotuneGroup"/>
+            <Target action="hide" conditionResult="false" option="autotuneGroup"/>
+            <Target action="show" conditionResult="true" option="useMaxDepthRange"/>
+            <Target action="hide" conditionResult="false" option="useMaxDepthRange"/>
+            <Target action="show" conditionResult="true" option="useGrowthSelector"/>
+            <Target action="hide" conditionResult="false" option="useGrowthSelector"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; !($validationDataChoice=='1'))">
+            <Target action="show" conditionResult="true" option="autotuneCombo"/>
+            <Target action="hide" conditionResult="false" option="autotuneCombo"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $autotune == 1)">
+            <Target action="show" conditionResult="true" option="autoTargetEventCombo"/>
+            <Target action="hide" conditionResult="false" option="autoTargetEventCombo"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $intervalVariables.size() > 0)">
+            <Target action="show" conditionResult="true" option="useNumbinsRange"/>
+            <Target action="hide" conditionResult="false" option="useNumbinsRange"/>
+        </Dependency>
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1')">
+            <Target action="show" conditionResult="true" option="partitionDataCombo"/>
+            <Target action="hide" conditionResult="false" option="partitionDataCombo"/>
+        </Dependency>
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;              $partitionDataCombo == 'partitionDataFractionChoice'">
+            <Target action="show" conditionResult="true" option="useRandomSeed"/>
+            <Target action="hide" conditionResult="false" option="useRandomSeed"/>
+        </Dependency>
+        <Dependency condition="(($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice')">
+            <Target action="show" conditionResult="true" option="partitionVariable"/>
+            <Target action="hide" conditionResult="false" option="partitionVariable"/>
+        </Dependency>
+        <Dependency condition="(($validationDataChoice==1 || $testDataChoice==1) &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;              $partitionVariable.size() > 0                       )">
+            <Target action="show" conditionResult="true" option="useTrainingLevel"/>
+            <Target action="hide" conditionResult="false" option="useTrainingLevel"/>
+        </Dependency>
+        <Dependency condition="($outputDS==1)">
+            <Target action="show" conditionResult="true" option="includeVars"/>
+            <Target action="hide" conditionResult="false" option="includeVars"/>
+        </Dependency>
+        <Dependency condition="($plotsCombo=='customPlotChoice')">
+            <Target action="show" conditionResult="true" option="zoomedTree"/>
+            <Target action="hide" conditionResult="false" option="zoomedTree"/>
+        </Dependency>
+        <!-- End of Dependencies whose targets are used in conditions of dependencies -->
+        <Dependency condition="($targetType == 'useNominalTarget')">
+            <Target action="show" conditionResult="true" option="categoricalTarget"/>
+            <Target action="hide" conditionResult="false" option="categoricalTarget"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useIntervalTarget')">
+            <Target action="show" conditionResult="true" option="continuousTarget"/>
+            <Target action="hide" conditionResult="false" option="continuousTarget"/>
+        </Dependency>
+        <Dependency condition=" !($autotune == 1) || ($autotune == 1 &amp;&amp; !($useMaxDepthRange == 1)) ">
+            <Target action="show" conditionResult="true" option="maxDepth"/>
+            <Target action="hide" conditionResult="false" option="maxDepth"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $useMaxDepthRange == 1)">
+            <Target action="show" conditionResult="true" option="initialDepth"/>
+            <Target action="hide" conditionResult="false" option="initialDepth"/>
+            <Target action="show" conditionResult="true" option="lowerDepth"/>
+            <Target action="hide" conditionResult="false" option="lowerDepth"/>
+            <Target action="show" conditionResult="true" option="upperDepth"/>
+            <Target action="hide" conditionResult="false" option="upperDepth"/>
+        </Dependency>
+        <Dependency condition="($intervalVariables.size() > 0 &amp;&amp;              (!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useNumbinsRange == 1)))             )">
+            <Target action="show" conditionResult="true" option="intervalBins"/>
+            <Target action="hide" conditionResult="false" option="intervalBins"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $intervalVariables.size() > 0 &amp;&amp; $useNumbinsRange == 1)">
+            <Target action="show" conditionResult="true" option="initialNumbins"/>
+            <Target action="hide" conditionResult="false" option="initialNumbins"/>
+            <Target action="show" conditionResult="true" option="lowerNumbins"/>
+            <Target action="hide" conditionResult="false" option="lowerNumbins"/>
+            <Target action="show" conditionResult="true" option="upperNumbins"/>
+            <Target action="hide" conditionResult="false" option="upperNumbins"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp;              (!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useGrowthSelector == 1)))             )">
+            <Target action="show" conditionResult="true" option="catGrowthMethod"/>
+            <Target action="hide" conditionResult="false" option="catGrowthMethod"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp;             ($autotune == 1 &amp;&amp; $useGrowthSelector == 1)             )">
+            <Target action="show" conditionResult="true" option="catGrowthSelector"/>
+            <Target action="hide" conditionResult="false" option="catGrowthSelector"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $validationDataChoice==1)">
+            <Target action="show" conditionResult="true" option="catPruneMethod"/>
+            <Target action="hide" conditionResult="false" option="catPruneMethod"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; !($validationDataChoice==1))">
+            <Target action="show" conditionResult="true" option="catNoValidationPruneMethod"/>
+            <Target action="hide" conditionResult="false" option="catNoValidationPruneMethod"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useIntervalTarget' &amp;&amp;              (!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useGrowthSelector == 1)))             )">
+            <Target action="show" conditionResult="true" option="contGrowthMethod"/>
+            <Target action="hide" conditionResult="false" option="contGrowthMethod"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useIntervalTarget' &amp;&amp;             ($autotune == 1 &amp;&amp; $useGrowthSelector == 1)             )">
+            <Target action="show" conditionResult="true" option="contGrowthSelector"/>
+            <Target action="hide" conditionResult="false" option="contGrowthSelector"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useIntervalTarget' &amp;&amp; $validationDataChoice==1)">
+            <Target action="show" conditionResult="true" option="contPruneMethod"/>
+            <Target action="hide" conditionResult="false" option="contPruneMethod"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useIntervalTarget' &amp;&amp; !($validationDataChoice==1))">
+            <Target action="show" conditionResult="true" option="contNoValidationPruneMethod"/>
+            <Target action="hide" conditionResult="false" option="contNoValidationPruneMethod"/>
+        </Dependency>
+        <!--    
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $categoricalTarget.size() > 0 &amp;&amp; $dataset.getDistinctCount($categoricalTarget[0]) == 2 )">
+            <Target option="eventCombo" conditionResult="true"  action="show"/>
+            <Target option="eventCombo" conditionResult="false" action="hide"/>
+        </Dependency>
+-->
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp;              (             ($catPruneMethod &amp;&amp; $catPruneMethod == 'c45Choice') ||             ($catNoValidationPruneMethod &amp;&amp; $catNoValidationPruneMethod == 'c45Choice')              )             )">
+            <Target action="show" conditionResult="true" option="pruningConfidence"/>
+            <Target action="hide" conditionResult="false" option="pruningConfidence"/>
+        </Dependency>
+        <Dependency condition="(!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useGrowthSelector == 1))) &amp;&amp;              (             ($targetType == 'useNominalTarget' &amp;&amp;                 ($catGrowthMethod == 'chaidChoice' || $catGrowthMethod == 'chisqChoice' ||                   $catGrowthMethod == 'fastChaidChoice')) ||             ($targetType == 'useIntervalTarget' &amp;&amp;                  ($contGrowthMethod == 'chaidChoice' || $contGrowthMethod == 'ftestChoice'))                 )">
+            <Target action="show" conditionResult="true" option="pvalue"/>
+            <Target action="hide" conditionResult="false" option="pvalue"/>
+            <Target action="show" conditionResult="true" option="bonferroni"/>
+            <Target action="hide" conditionResult="false" option="bonferroni"/>
+        </Dependency>
+        <Dependency condition="((!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useGrowthSelector == 1))) &amp;&amp;          $targetType == 'useNominalTarget' &amp;&amp; $catGrowthMethod == 'entropyChoice' )">
+            <Target action="show" conditionResult="true" option="minEntropy"/>
+            <Target action="hide" conditionResult="false" option="minEntropy"/>
+        </Dependency>
+        <Dependency condition="((!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useGrowthSelector == 1))) &amp;&amp;          $targetType == 'useNominalTarget' &amp;&amp; $catGrowthMethod == 'fastChaidChoice' )">
+            <Target action="show" conditionResult="true" option="minDist"/>
+            <Target action="hide" conditionResult="false" option="minDist"/>
+        </Dependency>
+        <Dependency condition="(             ($targetType == 'useNominalTarget' &amp;&amp;                 (                 ($catNoValidationPruneMethod &amp;&amp; $catNoValidationPruneMethod == 'costChoice') ||                  ($catPruneMethod &amp;&amp; $catPruneMethod == 'costChoice')                                 )                        ) ||             ($targetType == 'useIntervalTarget' &amp;&amp;                 (                 ($contNoValidationPruneMethod &amp;&amp; $contNoValidationPruneMethod == 'costChoice') ||                  ($contPruneMethod &amp;&amp; $contPruneMethod == 'costChoice')                 )             )             )">
+            <Target action="show" conditionResult="true" option="pruneBy"/>
+            <Target action="hide" conditionResult="false" option="pruneBy"/>
+        </Dependency>
+        <Dependency condition="(             ($targetType == 'useNominalTarget' &amp;&amp;                 (                 ($catPruneMethod &amp;&amp;                     (($catPruneMethod == 'costChoice' &amp;&amp; $pruneBy == 'leavesChoice') || $catPruneMethod == 'reducedErrorChoice')                 ) ||                 ($catNoValidationPruneMethod &amp;&amp;                     (($catNoValidationPruneMethod == 'costChoice'&amp;&amp; $pruneBy == 'leavesChoice') || $catNoValidationPruneMethod == 'reducedErrorChoice')                 )                 )                ) ||             ($targetType == 'useIntervalTarget' &amp;&amp;                 (                  ($contPruneMethod &amp;&amp;                     (($contPruneMethod == 'costChoice' &amp;&amp; $pruneBy == 'leavesChoice') || $contPruneMethod == 'reducedErrorChoice')                 ) ||                 ($contNoValidationPruneMethod &amp;&amp;                     (($contNoValidationPruneMethod == 'costChoice' &amp;&amp; $pruneBy == 'leavesChoice') || $contNoValidationPruneMethod == 'reducedErrorChoice')                 )                 )             )             )">
+            <Target action="show" conditionResult="true" option="nLeaves"/>
+            <Target action="hide" conditionResult="false" option="nLeaves"/>
+        </Dependency>
+        <Dependency condition="(             ($targetType == 'useNominalTarget' &amp;&amp;                 (                 ($catPruneMethod &amp;&amp;                     ($catPruneMethod == 'costChoice' &amp;&amp; $pruneBy == 'alphaChoice')                 ) ||                 ($catNoValidationPruneMethod &amp;&amp;                     ($catNoValidationPruneMethod == 'costChoice'&amp;&amp; $pruneBy == 'alphaChoice')                 )                 )                ) ||             ($targetType == 'useIntervalTarget' &amp;&amp;                 (                  ($contPruneMethod &amp;&amp;                     ($contPruneMethod == 'costChoice' &amp;&amp; $pruneBy == 'alphaChoice')                 ) ||                 ($contNoValidationPruneMethod &amp;&amp;                     ($contNoValidationPruneMethod == 'costChoice' &amp;&amp; $pruneBy == 'alphaChoice')                 )                 )             )             )">
+            <Target action="show" conditionResult="true" option="ccValue"/>
+            <Target action="hide" conditionResult="false" option="ccValue"/>
+        </Dependency>
+        <Dependency condition="(             (             ($targetType == 'useNominalTarget' &amp;&amp;                            ($catNoValidationPruneMethod &amp;&amp; $catNoValidationPruneMethod == 'costChoice'                 )                        ) ||             ($targetType == 'useIntervalTarget' &amp;&amp;                 ($contNoValidationPruneMethod &amp;&amp; $contNoValidationPruneMethod == 'costChoice'                 )             )             ) &amp;&amp; $pruneBy == 'kfoldChoice'             )">
+            <Target action="show" conditionResult="true" option="kfold"/>
+            <Target action="hide" conditionResult="false" option="kfold"/>
+            <Target action="show" conditionResult="true" option="cvcc"/>
+            <Target action="hide" conditionResult="false" option="cvcc"/>
+        </Dependency>
+        <Dependency condition="$autotune == 1 &amp;&amp; !($validationDataChoice=='1') &amp;&amp;  $autotuneCombo == 'autoPartitionChoice'">
+            <Target action="show" conditionResult="true" option="autoValidationFraction"/>
+            <Target action="hide" conditionResult="false" option="autoValidationFraction"/>
+        </Dependency>
+        <Dependency condition="$autotune == 1 &amp;&amp; !($validationDataChoice=='1') &amp;&amp; $autotuneCombo == 'autoCVChoice'">
+            <Target action="show" conditionResult="true" option="autoNFolds"/>
+            <Target action="hide" conditionResult="false" option="autoNFolds"/>
+        </Dependency>
+        <Dependency condition="$autotune == 1 &amp;&amp; $useAutoNParallel == 1">
+            <Target action="show" conditionResult="true" option="autoNParallel"/>
+            <Target action="hide" conditionResult="false" option="autoNParallel"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $autotune == 1)">
+            <Target action="show" conditionResult="true" option="autoNominalObjective"/>
+            <Target action="hide" conditionResult="false" option="autoNominalObjective"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $autotune == 1 &amp;&amp; $autoTargetEventCombo == 'autoSelectLevelChoice')">
+            <Target action="show" conditionResult="true" option="autoEventCombo"/>
+            <Target action="hide" conditionResult="false" option="autoEventCombo"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useIntervalTarget' &amp;&amp; $autotune == 1)">
+            <Target action="show" conditionResult="true" option="autoIntervalObjective"/>
+            <Target action="hide" conditionResult="false" option="autoIntervalObjective"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; ($autoSearchMethod == 'lhsSearchChoice' || $autoSearchMethod == 'randomSearchChoice'))">
+            <Target action="show" conditionResult="true" option="autoSampleSize"/>
+            <Target action="hide" conditionResult="false" option="autoSampleSize"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $autoSearchMethod == 'gaSearchChoice')">
+            <Target action="show" conditionResult="true" option="autotuneDetailsGroup"/>
+            <Target action="hide" conditionResult="false" option="autotuneDetailsGroup"/>
+        </Dependency>
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;              $partitionDataCombo == 'partitionDataFractionChoice' &amp;&amp;             $useRandomSeed == '1'">
+            <Target action="show" conditionResult="true" option="randomSeed"/>
+            <Target action="hide" conditionResult="false" option="randomSeed"/>
+            <Target action="show" conditionResult="true" option="partitionRandomSeedNote"/>
+            <Target action="hide" conditionResult="false" option="partitionRandomSeedNote"/>
+        </Dependency>
+        <!-- NOT USED   
+        <Dependency condition="(($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target option="trainingDataFraction" conditionResult="true"  action="show"/>
+            <Target option="trainingDataFraction" conditionResult="false" action="hide"/>
+        </Dependency>
+-->
+        <Dependency condition="($validationDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="validationDataFraction"/>
+            <Target action="hide" conditionResult="false" option="validationDataFraction"/>
+        </Dependency>
+        <Dependency condition="($testDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="testDataFraction"/>
+            <Target action="hide" conditionResult="false" option="testDataFraction"/>
+        </Dependency>
+        <Dependency condition="(($validationDataChoice==1 || $testDataChoice==1) &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;              $partitionVariable.size() > 0  &amp;&amp;             $useTrainingLevel == 1                    )">
+            <Target action="show" conditionResult="true" option="trainingLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="trainingLevelCombo"/>
+        </Dependency>
+        <Dependency condition="($validationDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp; $partitionVariable.size() > 0)">
+            <Target action="show" conditionResult="true" option="validationLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="validationLevelCombo"/>
+        </Dependency>
+        <Dependency condition="($testDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp; $partitionVariable.size() > 0)">
+            <Target action="show" conditionResult="true" option="testLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="testLevelCombo"/>
+        </Dependency>
+        <Dependency condition="($plotsCombo=='customPlotChoice')">
+            <Target action="show" conditionResult="true" option="wholeTree"/>
+            <Target action="hide" conditionResult="false" option="wholeTree"/>
+            <Target action="show" conditionResult="true" option="variableImportancePlot"/>
+            <Target action="hide" conditionResult="false" option="variableImportancePlot"/>
+        </Dependency>
+        <Dependency condition="($plotsCombo=='customPlotChoice' &amp;&amp; (             ($targetType == 'useNominalTarget' &amp;&amp;                 (                 ($catPruneMethod &amp;&amp;                     ($catPruneMethod == 'costChoice')                 ) ||                 ($catNoValidationPruneMethod &amp;&amp;                     ($catNoValidationPruneMethod == 'costChoice')                 )                 )                ) ||             ($targetType == 'useIntervalTarget' &amp;&amp;                 (                  ($contPruneMethod &amp;&amp;                     ($contPruneMethod == 'costChoice')                 ) ||                 ($contNoValidationPruneMethod &amp;&amp;                     ($contNoValidationPruneMethod == 'costChoice')                 )                 )             )             ) &amp;&amp; $pruneBy == 'kfoldChoice'             )">
+            <Target action="show" conditionResult="true" option="cvccPlot"/>
+            <Target action="hide" conditionResult="false" option="cvccPlot"/>
+        </Dependency>
+        <Dependency condition="($plotsCombo=='customPlotChoice' &amp;&amp; $zoomedTree == 1)">
+            <Target action="show" conditionResult="true" option="plotDepth"/>
+            <Target action="hide" conditionResult="false" option="plotDepth"/>
+        </Dependency>
+        <Dependency condition="($outputDS==1)">
+            <Target action="enable" conditionResult="true" option="outputDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDSName"/>
+            <Target action="show" conditionResult="true" option="includeVarsInstruction"/>
+            <Target action="hide" conditionResult="false" option="includeVarsInstruction"/>
+        </Dependency>
+        <Dependency condition="($outputDS=='1' &amp;&amp; $includeVars=='includeSelectedVars')">
+            <Target action="show" conditionResult="true" option="copyVariables"/>
+            <Target action="hide" conditionResult="false" option="copyVariables"/>
+        </Dependency>
+        <Dependency condition="($outVarImpDS==1)">
+            <Target action="enable" conditionResult="true" option="outVarImpDSName"/>
+            <Target action="disable" conditionResult="false" option="outVarImpDSName"/>
+        </Dependency>
+        <Dependency condition="($scoreCode==1)">
+            <Target action="enable" conditionResult="true" option="scoringCodeFileName"/>
+            <Target action="disable" conditionResult="false" option="scoringCodeFileName"/>
+        </Dependency>
+    </Dependencies>
+    <Requirements>
+        <Requirement condition="($intervalVariables.size() > 0 || $ordinalVariables.size() > 0 || $nominalVariables.size() > 0)">
+            <Message nlsKey="intervalOrdinalNominalRequirementKey">Select at least one interval, ordinal, or nominal input.</Message>
+        </Requirement>
+        <!-- not currently used
+        <Requirement condition="(!($validationDataChoice == 1) ||
+          ($partitionDataCombo == 'partitionDataVariableChoice') ||
+          ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 0 &amp;&amp; ( $validationDataFraction == '' || $validationDataFraction &lt; $MathTool.toDouble(1.0)))
+)">
+            <Message nlsKey="requirementKey">The sampling proportion for validation data must be greater than 0 and less than 1.</Message>
+        </Requirement> 
+  -->
+        <Requirement condition="(!($validationDataChoice == 1) || !($testDataChoice == 1) ||              ($partitionDataCombo == 'partitionDataVariableChoice') ||             ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 1 &amp;&amp;              ($validationDataFraction == '' || $MathTool.add($MathTool.toDouble($validationDataFraction),$MathTool.toDouble($testDataFraction) ) &lt; 1.0)))">
+            <Message nlsKey="sumSamplingProportionsRequirementKey">The sum of the sampling proportions for validation and test data must be less than 1.0.</Message>
+        </Requirement>
+        <Requirement condition="(         !(             ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 1) &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() > 0 &amp;&amp;             $validationLevelCombo == $testLevelCombo         ))">
+            <Message nlsKey="partitionVariableValuesRequirementKey">The value of the partitioning variable must be different for validation and test cases.</Message>
+        </Requirement>
+        <Requirement condition="(         !(             $validationDataChoice == 1 &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() > 0 &amp;&amp;             $useTrainingLevel == 1 &amp;&amp;              $validationLevelCombo == $trainingLevelCombo         ))">
+            <Message nlsKey="partitionVariableTraining_ValidationValuesRequirementKey">The value of the partitioning variable must be different for training and validation cases.</Message>
+        </Requirement>
+        <Requirement condition="(         !(             $testDataChoice == 1 &amp;&amp;             $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() > 0 &amp;&amp;             $useTrainingLevel == 1 &amp;&amp;              $testLevelCombo == $trainingLevelCombo         ))">
+            <Message nlsKey="partitionVariableTraining_TestValuesRequirementKey">The value of the partitioning variable must be different for training and test cases.</Message>
+        </Requirement>
+        <Requirement condition="!($autotune ==1) || ($autotune ==1 &amp;&amp; ($useMaxDepthRange == 1 || $useGrowthSelector == 1 || ($intervalVariables.size() > 0 &amp;&amp; $useNumbinsRange == 1)))         ">
+            <Message nlsKey="noAutotuneOptionsRequirementKey">Select at least one option to autotune.</Message>
+        </Requirement>
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useMaxDepthRange == 1 &amp;&amp; ($lowerDepth > $upperDepth))">
+            <Message nlsKey="useMaxDepthRangeRequirementKey">The lower bound for the maximum depth of the tree must be less than the upper bound.</Message>
+        </Requirement>
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useMaxDepthRange == 1 &amp;&amp;              (($initialDepth &lt; $lowerDepth ) || ($initialDepth > $upperDepth))             )">
+            <Message nlsKey="useMaxDepthInitialValueRequirementKey">The initial value for the maximum depth of the tree must be greater than or equal to the lower bound and less than or equal to the upper bound.</Message>
+        </Requirement>
+        <Requirement condition="!($intervalVariables.size() > 0 &amp;&amp; $autotune ==1 &amp;&amp; $useNumbinsRange == 1 &amp;&amp; ($lowerNumbins > $upperNumbins))">
+            <Message nlsKey="intervalBinRangeRequirementKey">The lower bound for the number of interval bins must be less than the upper bound.</Message>
+        </Requirement>
+        <Requirement condition="!($intervalVariables.size() > 0 &amp;&amp; $autotune ==1 &amp;&amp; $useNumbinsRange == 1 &amp;&amp;              (($initialNumbins &lt; $lowerNumbins ) || ($initialNumbins > $upperNumbins))             )">
+            <Message nlsKey="intervalBinInitialValueRequirementKey">The initial value for the number of interval bins must be greater than or equal to the lower bound and less than or equal to the upper bound.</Message>
+        </Requirement>
+        <Requirement condition="!($outputDS == 1 &amp;&amp; $outVarImpDS == 1 &amp;&amp; !($outputDSName == '') &amp;&amp; $outputDSName.equalsIgnoreCase($outVarImpDSName))">
+            <Message nlsKey="scoredAndVarImpDatasetsMustBeDifferentMsgKey">The names of the scored data and variable importances output data sets must be different.</Message>
+        </Requirement>
+        <Requirement condition="!($outputDSName &amp;&amp; $outputDSName != '' &amp;&amp;             ($outputDSName.indexOf('.') > 0 &amp;&amp;             $outputDSName.toUpperCase().substring(0,$outputDSName.indexOf('.')) == 'WORK'))">
+            <Message nlsKey="outputDSNameMsgKey">The scored data set must have a two-level name that includes a CAS engine libref.</Message>
+        </Requirement>
+    </Requirements>
+    <CodeTemplate><![CDATA[
+ods noproctitle;
+#if ($plotsCombo=='customPlotChoice' && ($wholeTreePlot == 1 || $zoomedTreePlot == 1 || 
+    $rocPlot == 1 || $variableImportancePlot == 1))
+ods graphics / imagemap=on;
+#end
+
+#if ($targetType == 'useNominalTarget')
+      #if ($validationDataChoice == 1)
+            #set($pruneMethod=$catPruneMethod )
+      #else #set($pruneMethod=$catNoValidationPruneMethod )
+      #end
+#elseif ($targetType == 'useIntervalTarget')
+      #if ($validationDataChoice == 1)
+            #set($pruneMethod=$contPruneMethod )
+      #else #set($pruneMethod=$contNoValidationPruneMethod )
+      #end
+#end
+
+proc treesplit data=$dataset
+   #if ((!($autotune == 1) || ($autotune == 1 && !($useMaxDepthRange == 1))) && !($maxDepth==6)) maxdepth=$maxDepth#end
+   #if ($intervalVariables.size() > 0 && 
+        (!($autotune == 1) || ($autotune == 1 && !($useNumbinsRange == 1))) && !($intervalBins == 20)) numbin=$intervalBins#end
+
+#if (!($maxBranches==2)) maxbranch=$maxBranches#end
+#if (!($minLeafSize==5)) minleafsize=$minLeafSize#end
+#if ($pruneMethod == 'costChoice' && $cvcc == 1) cvcc#end
+
+#if     ($plotsCombo=='defaultPlotChoice')
+#elseif ($plotsCombo=='noplotsChoice') plots=none
+#else 
+   #if ($wholeTree == 1 || $zoomedTree == 1 || $roc == 1 || ($cvccPlot && $cvccPlot == 1))
+plots(only)=(
+      #if ($wholeTree == 1) wholetree#end
+      #if ($zoomedTree == 1) zoomedtree#if(!($plotDepth == 2))(depth=$plotDepth)#end#end
+      #if ($roc == 1) roc#end
+      #if ($cvccPlot && $cvccPlot == 1) cvcc#end
+   )
+   #end
+#end
+;
+
+#if ($dataset.getWhereClause() != '')
+   where $dataset.getWhereClause();
+#end
+
+## PARTITION THE DATA
+#if ($testDataChoice == 1 || $validationDataChoice == 1)
+   partition
+   #if($partitionDataCombo == 'partitionDataFractionChoice')
+ fraction(#if ($validationDataChoice == 1) validate=$validationDataFraction#end
+      #if($testDataChoice == 1) test=$testDataFraction#end
+      #if($useRandomSeed == '1') seed=$randomSeed#end
+   #elseif ($partitionDataCombo == 'partitionDataVariableChoice')
+ role=#foreach( $item in $partitionVariable ) $item #end(
+      #if ($validationDataChoice == 1) validate=$CTMUtil.quoteString($validationLevelCombo)#end
+      #if($testDataChoice == 1) test=$CTMUtil.quoteString($testLevelCombo)#end
+      #if($useTrainingLevel == 1) train=$CTMUtil.quoteString($trainingLevelCombo)#end
+   #end
+   );
+#end
+
+#if ( $intervalVariables.size() > 0)
+   input#foreach( $item in $intervalVariables ) $item#end / level=interval;
+#end
+#if ( $ordinalVariables.size() > 0)
+   input#foreach( $item in $ordinalVariables ) $item#end / level=ordinal;
+#end
+#if ( $nominalVariables.size() > 0)
+   input#foreach( $item in $nominalVariables ) $item#end / level=nominal;
+#end
+
+#if ($targetType == 'useNominalTarget')
+   #if ( $categoricalTarget.size() > 0)
+   target #foreach( $item in $categoricalTarget ) $item#end / level=nominal;
+   ##if ($dataset.getDistinctCount($categoricalTarget[0]) == 2)(event=$CTMUtil.quoteString($eventCombo))#end
+   #end
+#elseif ($targetType == 'useIntervalTarget')
+   #if ($continuousTarget.size() > 0)
+   target #foreach( $item in $continuousTarget ) $item#end / level=interval;
+   #end
+#end 
+ 
+#if( $freqVariable.size() > 0 )
+    freq #foreach( $item in $freqVariable ) $item #end;
+#end
+
+#if (!($autotune == 1) || ($autotune == 1 && !($useGrowthSelector == 1)))
+
+   #if ($targetType == 'useNominalTarget')
+      #set($growthMethod=$catGrowthMethod )
+   #elseif ($targetType == 'useIntervalTarget')
+      #set($growthMethod=$contGrowthMethod )
+   #end
+
+   grow
+   #if ($growthMethod == 'chaidChoice')chaid#if (!($pvalue == 0.3) || $bonferroni == 1)(
+   #if (!($pvalue == 0.3)) alpha=$pvalue#end 
+   #if ($bonferroni && $bonferroni == 1) bonferroni#end
+)
+   #end
+   #elseif ($growthMethod == 'chisqChoice')chisquare#if (!($pvalue == 0.3) || $bonferroni == 1)(
+   #if (!($pvalue == 0.3)) alpha=$pvalue#end 
+   #if ($bonferroni && $bonferroni == 1) bonferroni#end
+)
+   #end
+   #elseif ($growthMethod == 'entropyChoice')entropy#if (!($minEntropy == 0))(minentropy=$minEntropy)#end
+   #elseif ($growthMethod == 'fastChaidChoice')fastchaid#if (!($minDist == 0.01)) minDist=$minDist#end
+   #elseif ($growthMethod == 'giniChoice')gini
+   #elseif ($growthMethod == 'igrChoice')igr
+   #elseif ($growthMethod == 'ftestChoice')ftest#if (!($pvalue == 0.3) || $bonferroni == 1)(
+   #if (!($pvalue == 0.3)) alpha=$pvalue#end 
+   #if ($bonferroni && $bonferroni == 1) bonferroni#end
+)
+   #end
+   #elseif ($growthMethod == 'rssChoice')rss
+   #end
+;
+
+#end
+
+   prune#if ($pruneMethod == 'costChoice') costcomplexity#if ($pruneBy == 'kfoldChoice')#if (!($validationDataChoice == 1))(kfold=$kfold)#end  ##if (!($kfold==10))(kfold=$kfold)#end
+#elseif ($pruneBy == 'leavesChoice')(leaves=$nLeaves)    ##if (!($nLeaves == 25))(leaves=$nLeaves)#end
+#elseif ($pruneBy == 'alphaChoice')(alpha=$ccValue)
+#end
+   
+   #elseif ($pruneMethod == 'c45Choice') c45#if (!($pruningConfidence == 0.25))(confidence=$pruningConfidence)#end
+   #elseif ($pruneMethod == 'reducedErrorChoice') reducederror#if (!($nLeaves == 25))(leaves=$nLeaves)#end
+   #elseif ($pruneMethod == 'noPruningChoice') none
+   #end
+;
+
+#if ($autotune == 1)
+   autotune
+   
+ tuningparameters=(
+   #if ($useMaxDepthRange == 1)
+      maxdepth#if (!($initialDepth == 10) || !($lowerDepth == 1) || !($upperDepth == 19))
+(#if (!($initialDepth == 10))init=$initialDepth#end#if (!($lowerDepth == 1)) lb=$lowerDepth#end#if (!($upperDepth == 19)) ub=$upperDepth#end)
+      #end
+   #{else}maxdepth(exclude)
+   #end
+   #if ($intervalVariables.size() > 0 && $useNumbinsRange == 1) 
+      numbin#if (!($initialNumbins == 20) || !($lowerNumbins == 20) || !($upperNumbins == 200))
+(#if (!($initialNumbins == 20))init=$initialNumbins#end#if (!($lowerNumbins == 20)) lb=$lowerNumbins#end#if (!($upperNumbins == 200)) ub=$upperNumbins#end)
+      #end
+   #{else} numbin(exclude)
+   #end
+   #if ($useGrowthSelector == 1)
+      #set($allCriteria=0)
+      #if ($targetType == 'useNominalTarget')
+         #set($growthSelector=$catGrowthSelector )
+         #if ($growthSelector.size() == 5)#set($allCriteria=1)#end
+      #elseif ($targetType == 'useIntervalTarget')
+         #set($growthSelector=$contGrowthSelector )
+         #if ($growthSelector.size() == 3)#set($allCriteria=1)#end
+      #end
+      ## The following line contains a number of Velocity statements on the same line in order to avoid problems
+      ## with formatting the SAS code
+      criterion#if ($allCriteria == 0)
+(values=#foreach( $item in $growthSelector )#if ($item == 'chaidChoice') chaid#elseif ($item == 'chisqChoice') chisquare#elseif ($item == 'entropyChoice') entropy#elseif ($item == 'fastChaidChoice') fastchaid#elseif ($item == 'giniChoice') gini#elseif ($item == 'igrChoice') igr#elseif ($item == 'ftestChoice') ftest#elseif ($item == 'rssChoice') rss#end#end)
+      #end
+   #else criterion(exclude)
+   #end
+ )
+
+   #if ($targetType == 'useNominalTarget')
+      #if ($autoTargetEventCombo == 'autoSelectLevelChoice')
+ targetevent=$CTMUtil.quoteString($autoEventCombo)
+      #end
+   #end
+
+   #if (!($autoSearchMethod == 'gaSearchChoice'))
+ searchmethod=#if ($autoSearchMethod == 'lhsSearchChoice')lhs#elseif ($autoSearchMethod == 'randomSearchChoice')random#end
+#if ((($autoSearchMethod == 'lhsSearchChoice' || $autoSearchMethod == 'randomSearchChoice')) && !($autoSampleSize == 50)) samplesize=$autoSampleSize#end
+#end
+
+   #if ($targetType == 'useNominalTarget')
+      #set($_autotuneObjective=$autoNominalObjective)
+   #elseif ($targetType == 'useIntervalTarget')
+      #set($_autotuneObjective=$autoIntervalObjective)
+   #end
+   #if (($targetType == 'useNominalTarget' && !($_autotuneObjective == 'autotuneMiscChoice')) ||
+        ($targetType == 'useIntervalTarget' && !($_autotuneObjective == 'autotuneASEChoice'))
+       )
+ objective=
+      #if     ($_autotuneObjective== 'autotuneASEChoice')ase
+      #elseif ($_autotuneObjective== 'autotuneAUCChoice')auc
+      #elseif ($_autotuneObjective== 'autotuneF1Choice')f1
+      #elseif ($_autotuneObjective== 'autotuneF05Choice')f05
+      #elseif ($_autotuneObjective== 'autotuneGammaChoice')gamma
+      #elseif ($_autotuneObjective== 'autotuneGiniChoice')gini
+      #elseif ($_autotuneObjective== 'autotuneMCLLChoice')mcll
+      #elseif ($_autotuneObjective== 'autotuneMiscChoice')misc
+      #elseif ($_autotuneObjective== 'autotuneRaseChoice')rase
+      #elseif ($_autotuneObjective== 'autotuneTauChoice')tau
+      #elseif ($_autotuneObjective== 'autotuneKSChoice')ks
+      #elseif ($_autotuneObjective== 'autotuneMAEChoice')mae
+      #elseif ($_autotuneObjective== 'autotuneMSLEChoice')msle
+      #elseif ($_autotuneObjective== 'autotuneRMAEChoice')rmae
+      #elseif ($_autotuneObjective== 'autotuneRMSLEChoice')rmsle
+      #end
+   #end
+   
+   ## Autotune optimization parameters
+   #if (!($validationDataChoice == 1))
+      #if     ($autotuneCombo == 'autoPartitionChoice') fraction=$autoValidationFraction
+      #elseif ($autotuneCombo == 'autoCVChoice') kfold=$autoNFolds
+      #end
+   #end
+   #if (!($autoMaxtime == 60)) maxtime=%sysevalf($autoMaxtime*60)#end
+   #if ($autoSearchMethod == 'gaSearchChoice')
+      #if (!($autoMaxiter == 5)) maxiters=$autoMaxiter#end
+      #if (!($autoMaxevals == 50)) maxevals=$autoMaxevals#end
+      #if (!($autoPopsize == 10)) popsize=$autoPopsize#end
+   #end
+   #if ($useAutoNParallel == 1) nparallel=$autoNParallel#end
+   ;
+#end
+
+#if ($outputDS==1)
+   score out=$outputDSName
+   #if     ($includeVars=='includeAllVars') copyvars=(_all_)
+   #elseif ($includeVars=='includeSelectedVars')
+      #if( $copyVariables.size() > 0 ) copyvars=(#foreach( $item in $copyVariables ) $item#end)#end
+   #elseif ($includeVars=='includeAnalysisVars')
+      #if (($targetType == 'useNominalTarget' && $categoricalTarget.size() > 0) ||
+           ($targetType == 'useIntervalTarget' && $continuousTarget.size() > 0) ||
+           $intervalVariables.size() > 0 ||
+           $ordinalVariables.size() > 0 ||
+           $nominalVariables.size() > 0 ||
+           $freqVariable.size() > 0 ||
+           ($validationDataChoice==1 && $partitionDataCombo == 'partitionDataVariableChoice' && $partitionVariable.size() > 0)           
+           ) 
+ copyvars=(
+         #if ($targetType == 'useNominalTarget' && $categoricalTarget.size() > 0)
+             #foreach( $item in $categoricalTarget ) $item#end
+         #end
+         #if ($targetType == 'useIntervalTarget' && $continuousTarget.size() > 0)
+             #foreach( $item in $continuousTarget ) $item#end
+         #end
+         #if ($intervalVariables.size() > 0)
+             #foreach( $item in $intervalVariables ) $item#end
+         #end
+         #if ($ordinalVariables.size() > 0)
+             #foreach( $item in $ordinalVariables ) $item#end
+         #end
+         #if ($nominalVariables.size() > 0)
+             #foreach( $item in $nominalVariables ) $item#end
+         #end
+         #if ($freqVariable.size() > 0)
+             #foreach( $item in $freqVariable ) $item#end
+         #end
+         #if ($validationDataChoice==1 && $partitionDataCombo == 'partitionDataVariableChoice' && $partitionVariable.size() > 0)
+            #foreach( $item in $partitionVariable ) $item#end
+         #end
+ )
+       #end  
+   #end
+;
+#end
+#if ($outVarImpDS == 1 || ($plotsCombo=='customPlotChoice' && $variableImportancePlot == 1))
+   #if ($outVarImpDS == 1)
+         #set($varimpDSName="$outVarImpDSName")
+   #else #set($varimpDSName="Work._Treesplit_VarImp_")
+   #end
+   ods output VariableImportance=$varimpDSName
+   ;
+#end
+
+#if ($scoreCode == 1)
+   #set($len=$scoringCodeFileName.path.indexOf("/") )
+   #if($len >= 0)#set($delimiter="/")
+   #else#set($delimiter="\")
+   #end
+   code file="${scoringCodeFileName.path}$delimiter${scoringCodeFileName.name}"  
+ ;
+#end
+
+run;
+
+#if ($plotsCombo=='customPlotChoice' && $variableImportancePlot == 1)
+    proc sgplot data=$varimpDSName;
+    ## Variable Importance title
+    title3 $CTMUtil.quoteString( $variableImportancePlotTitle );
+        vbar variable / response=importance nostatlabel categoryorder=respdesc;
+    run;
+    title3;
+#end
+
+#if($plotsCombo=='customPlotChoice' && $variableImportancePlot == 1 && !($outVarImpDS == 1))
+proc delete data=Work._Treesplit_VarImp_;run;
+#end
+
+]]></CodeTemplate>
+    
+
+
+
+
+
+
+
+
+
+<TemplateValues version="4.2">
+<![CDATA[
+{"costChoice":"Cost complexity pruning","autotuneMSLEChoice":"Mean square logarithmic error","targetGroup":"Target","lhsSearchChoice":"Latin hypercube sample","autotuneGroup":"Autotune Settings","autotuneF1Choice":"F1 score","autoMaxevals":"50","eventCombo":"","sasOS":"Linux LIN X64 4.1.12-61.1.22.el7uek.x86_64","includeAnalysisVars":"0","giniChoice":"Gini index","upperDepth":"19","minLeafSize":"5","customPlotChoice":"Selected plots","alphaChoice":"Select subtree by cost complexity value","ccValue":"0.3","useIntervalBins":"","catNoValidationPruneMethod":"noPruningChoice","validationDataFraction":"","usePvalue":"","kfoldChoice":"Cross validation","autotuneKSChoice":"Kolmogorov-Smirnov statistic","includeVarsInstruction":"Include variables from the input CAS table:","chisqChoice":"Chi-square","useRandomSeed":"0","initialNumbins":"20","zoomedTree":"1","cvccPlot":"","autotuneRMAEChoice":"Root mean absolute error","randomSeed":"","methodsGroup":"METHODS","autoSampleSize":"50","freqVariable":"","autotuneRMSLEChoice":"Root mean square logarithmic error","partitionGroup":"Partition Data","autoSearchMethod":"gaSearchChoice","outputDSName":"mycas.ap_scored_treesplit","treeOptionGroup":"Creating a Tree","cvcc":"","autotuneF05Choice":"F0.5 score","autoTargetEventCombo":"autoUseFirstLevelChoice","scoreCode":"1","pruneBy":"kfoldChoice","scoringCodeFileName":{"path":"/r/ge.unx.sas.com/vol/vol120/u12/scnfuc","name":"score.sas"},"outVarImpDSName":"mycas.model_treesplit","autoNFolds":"5","leavesChoice":"Select subtree by number of leaves","rocPlot":"","continuousTarget":"","partitionDataFractionChoice":"Specify a sample proportion","useMinDist":"","rolesGroup":"ROLES","autotuneGiniChoice":"Gini's coefficient","noplotsChoice":"Suppress plots","useConfidence":"","autoSelectLevelChoice":"Select target value","partitionRandomSeedNote":"Specifying a random number seed may not replicate results in a distributed computing environment.","useNumbinsRange":"1","useMaxDepthRange":"1","validationLevelCombo":"1","randomSearchChoice":"Random sample","autoValidationFraction":"0.3","catPruneMethod":"noPruningChoice","targetType":"useNominalTarget","setMaxValuesLabel3":"Set maximum values:","variableImportancePlot":"","contGrowthMethod":"rssChoice","noPruningChoice":"No pruning (default)","useAutoNParallel":"","maxDepth":"6","upperNumbins":"200","autoNParallel":"2","sasVersion":"3.02","outputGroup":"OUTPUT DATA","minDist":"0.01","outputTab":"OUTPUT","copyVariables":"json:[{\"value\":\"_PartInd_\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"arrest_code\",\"type\":\"Numeric\",\"length\":8,\"format\":\"F8.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","dataset":{"librarytable":"MYCAS.CWPART"},"reducedErrorChoice":"Reduced error pruning","outputDS":"1","testDataFraction":"","autotuneRaseChoice":"Root average square error","partitionDataCombo":"partitionDataVariableChoice","gaSearchChoice":"Genetic algorithm","autotuneMiscChoice":"Misclassification rate","nominalVariables":"json:[{\"value\":\"fbi_code\",\"type\":\"Char\",\"length\":25,\"format\":\"$FBI25.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Location_Description\",\"type\":\"Char\",\"length\":47,\"format\":\"$47.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Domestic\",\"type\":\"Char\",\"length\":5,\"format\":\"$5.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Beat\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"District\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Ward\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Community_Area\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","useMinEntropy":"","useIntervalTarget":"0","testDataChoice":"0","partitionDataVariableChoice":"Choose a value of a partitioning variable","dataTab":"DATA","includeSelectedVars":"1","autotuneASEChoice":"Average square error","includeVars":"includeSelectedVars","autotuneMAEChoice":"Mean absolute error","ftestChoice":"F statistic","contPruneMethod":"noPruningChoice","intervalVariables":"json:[{\"value\":\"per_capita_income\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"hardship_index\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"percent_aged_under_18_or_over_64\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"percent_of_housing_crowded\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"percent_aged_25_without_high_sch\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"percent_aged_16_unemployed\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"percent_households_below_poverty\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"}]","testLevelCombo":"2","autoPartitionChoice":"Partition","autoMaxiter":"5","igrChoice":"Information gain ratio (default)","autoEventCombo":"","useNominalTarget":"1","autotuneTauChoice":"Kendall's Tau-a","categoricalTarget":"json:[{\"value\":\"arrest_code\",\"type\":\"Numeric\",\"length\":8,\"format\":\"F8.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","autotuneMCLLChoice":"Multi-class log loss","catGrowthSelector":"[\"igrChoice\",\"chaidChoice\",\"chisqChoice\",\"entropyChoice\",\"giniChoice\"]","validationDataChoice":"1","autoPopsize":"10","includeNoVars":"0","outVarImpDS":"0","plotsGroup":"PLOTS","inputDataLabel":"Input data contains training data. Include:","catGrowthMethod":"igrChoice","fastChaidChoice":"Fast CHAID","autotuneCombo":"autoPartitionChoice","plotDepth":"2","autotuneReadMore":"The autotuning process explores many different combinations of algorithm options, training a model for each combination (and multiple models when using cross-validation).  In an effort to find the best model, some of these combinations will be configurations that take a long time to train.  The overall time it takes to find the best model will vary and you should expect this process to take significantly longer than training a single model.","c45Choice":"C4.5 pruning","variableImportancePlotTitle":"Variable Importance","contGrowthSelector":"[\"rssChoice\",\"chaidChoice\",\"ftestChoice\"]","pvalue":"0.3","maxBranches":"2","autoUseFirstLevelChoice":"Use first target value","casOutputLibrefNote":"The following table must use a CAS engine libref:","initialDepth":"10","minEntropy":"0","useGrowthSelector":"1","entropyChoice":"Entropy","autotuneTimeNote":"Note: Expect a considerably longer run time (read more)","ordinalVariables":"","intervalBins":"20","wholeTree":"1","includeAllVars":"0","nodeOptionGroup":"Splitting a Node","defaultPlotChoice":"Default plots","autoNominalObjective":"autotuneMiscChoice","autotuneAUCChoice":"Area under curve","rssChoice":"Change in response variance (default)","lowerDepth":"1","otherRolesGroup":"ADDITIONAL ROLES","autotuneGammaChoice":"Goodman-Kruskal gamma","scoreCodeFileNote":"Specify a path name for the scoring code:","trainingLevelCombo":"0","autotune":"0","trainingDataFraction":"","plotsCombo":"defaultPlotChoice","autotuneDetailsGroup":"Genetic Algorithm Settings","useTrainingLevel":"1","lowerNumbins":"20","nLeaves":"25","dataGroup":"DATA","bonferroni":"","odsOutputLibrefNote":"The following data set must use a SAS libref:","inputsGroup":"Inputs","autoCVChoice":"K-fold cross-validation","contNoValidationPruneMethod":"noPruningChoice","partitionVariable":"json:[{\"value\":\"_PartInd_\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"}]","autoMaxtime":"60","autoIntervalObjective":"autotuneASEChoice","chaidChoice":"CHAID","optionsTab":"OPTIONS","pruningConfidence":"0.25","pruneOptionGroup":"Pruning a Tree","kfold":"10"}
+]]>
+</TemplateValues>
+</Task>

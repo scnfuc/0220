@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="6.2">
+    <Registration>
+        <Name>Partitioning</Name>
+        <Description>The Partitioning task creates two or three partitions of the input data using simple or stratified random sampling.</Description>
+        <GUID>3ad20201-7a2b-48e1-8dd7-6aa4f4635e7e</GUID>
+        <Procedures>PARTITION</Procedures>
+        <Version>4.2</Version>
+        <Links>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=4.2&amp;softwareContextId=ancmn_partition&amp;requestor=inapp">The PARTITION Procedure</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/training/viyasdmml">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource libraryEngineInclude="CAS" name="dataset" where="true">
+                <Roles>
+                    <Role indent="1" maxVars="4" minVars="1"
+                        name="targetVariables" type="A">Stratify by:</Role>
+                    <Role indent="1" maxVars="0" minVars="1"
+                        name="copyVariables" type="A">Include these variables:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="optionsTab">OPTIONS</Option>
+            <Option inputType="string" name="dataGroup">DATA</Option>
+            <Option inputType="string" name="rolesGroup">SAMPLING METHOD</Option>
+            <Option inputType="radio" name="simpleSamplingChoice" variable="samplingType">Simple random sampling</Option>
+            <Option inputType="radio" name="stratifiedSamplingChoice" variable="samplingType">Stratified sampling</Option>
+            <Option inputType="string" name="partitionsGroup">PARTITIONS</Option>
+            <Option inputType="combobox" name="nPartitions" width="50px">Number of partitions:</Option>
+            <Option inputType="string" name="nPartition2Choice">2</Option>
+            <Option inputType="string" name="nPartition3Choice">3</Option>
+            <Option decimalPlaces="0,15" inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 1 in the data set"
+                maxValue="99.9999999999" minValue="0.0000000001"
+                missingMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 1 in the data set"
+                name="sampPct1"
+                promptMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 1 in the data set"
+                rangeMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 1 in the data set"
+                required="true" width="100px">Sampling percentage for partition 1:</Option>
+            <Option decimalPlaces="0,15" inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 2 in the data set"
+                maxValue="99.9999999999" minValue="0.0000000001"
+                missingMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 2 in the data set"
+                name="sampPct2"
+                promptMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 2 in the data set"
+                rangeMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 2 in the data set"
+                required="true" width="100px">Sampling percentage for partition 2:</Option>
+            <Option inputType="string" name="samppct1Note">The sampling percentage can range between 0 and 100.</Option>
+            <Option inputType="string" name="samppct2Note">The sampling percentages can range between 0 and 100.</Option>
+            <Option inputType="string" name="partition2Note">Partition 2 consists of the unsampled cases.</Option>
+            <Option inputType="string" name="partition3Note">Partition 3 consists of the unsampled cases.</Option>
+            <Option defaultValue="_PartInd_" inputType="validationtext"
+                invalidMessage="Enter a valid SAS variable name"
+                missingMessage="Enter a valid SAS variable name"
+                name="partitionVarName" regExp=".{1,32}" required="true" width="200px">Variable name for partition values:</Option>
+            <Option defaultValue="1" indent="1" inputType="radio"
+                name="numPartVarType" variable="partitionVarType">Use numeric partition values</Option>
+            <Option indent="1" inputType="radio" name="charPartVarType" variable="partitionVarType">Use character partition values</Option>
+            <Option defaultValue="Partition 1" indent="2"
+                inputType="validationtext"
+                invalidMessage="Enter a value to identify data partition 1"
+                missingMessage="Enter a value to identify data partition 1"
+                name="charPartitionDataValue1" regExp=".*"
+                required="true" width="200px">ID value for partition 1 data:</Option>
+            <Option defaultValue="Partition 2" indent="2"
+                inputType="validationtext"
+                invalidMessage="Enter a value to identify data partition 2"
+                missingMessage="Enter a value to identify data partition 2"
+                name="charPartitionDataValue2" regExp=".*"
+                required="true" width="200px">ID value for partition 2 data:</Option>
+            <Option defaultValue="Partition 3" indent="2"
+                inputType="validationtext"
+                invalidMessage="Enter a value to identify data partition 3"
+                missingMessage="Enter a value to identify data partition 3"
+                name="charPartitionDataValue3" regExp=".*"
+                required="true" width="200px">ID value for partition 3 data:</Option>
+            <Option decimalPlaces="0" defaultValue="1" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 1"
+                maxValue="1000000" minValue="-1000000"
+                missingMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 1"
+                name="numPartitionDataValue1"
+                promptMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 1"
+                rangeMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 1"
+                required="true" width="100px">ID value for partition 1:</Option>
+            <Option decimalPlaces="0" defaultValue="0" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                maxValue="1000000" minValue="-1000000"
+                missingMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                name="num2PartitionsDataValue2"
+                promptMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                rangeMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                required="true" width="100px">ID value for partition 2:</Option>
+            <Option decimalPlaces="0" defaultValue="2" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                maxValue="1000000" minValue="-1000000"
+                missingMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                name="num3PartitionsDataValue2"
+                promptMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                rangeMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                required="true" width="100px">ID value for partition 2:</Option>
+            <Option decimalPlaces="0" defaultValue="0" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 3"
+                maxValue="1000000" minValue="-1000000"
+                missingMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 3"
+                name="num3PartitionsDataValue3"
+                promptMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 3"
+                rangeMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 3"
+                required="true" width="100px">ID value for partition 3:</Option>
+            <Option indent="1" inputType="string" name="numTwoPartitionsDataValueNote">ID value for partition 2: 0</Option>
+            <Option indent="1" inputType="string" name="numThreePartitionsDataValueNote">ID value for partition 3: 0</Option>
+            <Option inputType="string" name="methodsGroup">METHODS</Option>
+            <Option inputType="string" name="sampleByPct">Percentage</Option>
+            <Option defaultValue="0" inputType="checkbox" name="useRandomSeed">Random number seed</Option>
+            <Option decimalPlaces="0" indent="1" inputType="numbertext"
+                invalidMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                maxValue="2147483647" minValue="1"
+                missingMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                name="randomSeed"
+                promptMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                rangeMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                required="true" width="100px">Random seed:</Option>
+            <Option indent="1" inputType="string" name="randomSeedNote">Specifying a random number seed may not replicate results in a distributed computing environment.</Option>
+            <Option indent="1" inputType="checkbox" name="ignoreTargetCase">Ignore case of character stratification values</Option>
+            <Option inputType="string" name="outputTab">OUTPUT</Option>
+            <Option inputType="string" name="outputGroup">OUTPUT DATA</Option>
+            <Option inputType="string" name="casOutputLibrefNote">The following table must use a CAS engine libref:</Option>
+            <Option inputType="outputdata" libraryEngineInclude="cas"
+                name="outputDSName" required="true">Specify a CAS table:</Option>
+            <Option inputType="string" name="includeVarsInstruction">Include variables from the input CAS table:</Option>
+            <Option defaultValue="1" inputType="radio"
+                name="includeAllVars" variable="includeVars">Include all variables</Option>
+            <Option inputType="radio" name="includeSelectedVars" variable="includeVars">Include selected variables</Option>
+            <Option inputType="string" name="showDataGroup">Show Output Data</Option>
+            <Option defaultValue="0" inputType="checkbox" name="showData">Show output data</Option>
+            <Option defaultValue="showSubsetDataChoice"
+                inputType="combobox" name="showDataCombo">Show:</Option>
+            <Option inputType="string" name="showSubsetDataChoice">Show subset of output data</Option>
+            <Option inputType="string" name="showAllDataChoice">Show all output data</Option>
+            <Option decimalPlaces="0" defaultValue="10" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 for the number of observations to be shown"
+                minValue="1"
+                missingMessage="Enter an integer greater than 0 for the number of observations to be shown"
+                name="subsetNobs"
+                promptMessage="Enter an integer greater than 0 for the number of observations to be shown"
+                rangeMessage="Enter an integer greater than 0 for the number of observations to be shown" required="true">Number of observations to show:</Option>
+            <Option inputType="string" name="subsetTitle">Subset of {1}</Option>
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="rolesGroup">
+                <OptionItem option="simpleSamplingChoice"/>
+                <OptionItem option="stratifiedSamplingChoice"/>
+                <RoleItem role="targetVariables"/>
+                <!-- remove: not supported in 16w17
+                <OptionItem option="ignoreTargetCase"/> 
+                -->
+            </Group>
+            <Group open="true" option="partitionsGroup">
+                <OptionChoice option="nPartitions">
+                    <OptionItem option="nPartition2Choice"/>
+                    <OptionItem option="nPartition3Choice"/>
+                </OptionChoice>
+                <OptionItem option="sampPct1"/>
+                <OptionItem option="sampPct2"/>
+                <OptionItem option="samppct1Note"/>
+                <OptionItem option="samppct2Note"/>
+                <OptionItem option="partition2Note"/>
+                <OptionItem option="partition3Note"/>
+                <OptionItem option="useRandomSeed"/>
+                <OptionItem option="randomSeed"/>
+                <OptionItem option="randomSeedNote"/>
+            </Group>
+        </Container>
+        <Container option="outputTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="casOutputLibrefNote"/>
+                <OptionItem option="outputDSName"/>
+                <OptionItem option="partitionVarName"/>
+                <!--                
+                <OptionItem option="numPartVarType"/>
+                <OptionItem option="charPartVarType"/>
+                
+                <OptionItem option="charPartitionDataValue1"/>
+                <OptionItem option="charPartitionDataValue2"/>
+                <OptionItem option="charPartitionDataValue3"/>
+-->
+                <OptionItem option="numPartitionDataValue1"/>
+                <OptionItem option="num2PartitionsDataValue2"/>
+                <OptionItem option="num3PartitionsDataValue2"/>
+                <OptionItem option="num3PartitionsDataValue3"/>
+                <OptionItem option="includeVarsInstruction"/>
+                <OptionItem option="includeAllVars"/>
+                <OptionItem option="includeSelectedVars"/>
+                <RoleItem role="copyVariables"/>
+                <!--                    
+                <Group option="showDataGroup" open="true">
+                    <OptionItem option="showData"/>
+                    <OptionChoice option="showDataCombo">
+                        <OptionItem option="showSubsetDataChoice"/>
+                        <OptionItem option="showAllDataChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="subsetNobs"/>
+                </Group>
+-->
+            </Group>
+        </Container>
+    </UI>
+    <Dependencies>
+        <!-- can't show "ignoreTargetCase" only for character targets because there may be more than one target -->
+        <Dependency condition="!($samplingType=='simpleSamplingChoice')">
+            <Target action="show" conditionResult="true" option="ignoreTargetCase"/>
+            <Target action="hide" conditionResult="false" option="ignoreTargetCase"/>
+        </Dependency>
+        <Dependency condition="($samplingType=='stratifiedSamplingChoice')">
+            <Target action="show" conditionResult="true" option="targetVariables"/>
+            <Target action="hide" conditionResult="false" option="targetVariables"/>
+        </Dependency>
+        <Dependency condition="($includeVars=='includeSelectedVars')">
+            <Target action="show" conditionResult="true" option="copyVariables"/>
+            <Target action="hide" conditionResult="false" option="copyVariables"/>
+        </Dependency>
+        <Dependency condition="($useRandomSeed==1)">
+            <Target action="show" conditionResult="true" option="randomSeed"/>
+            <Target action="hide" conditionResult="false" option="randomSeed"/>
+            <Target action="show" conditionResult="true" option="randomSeedNote"/>
+            <Target action="hide" conditionResult="false" option="randomSeedNote"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition3Choice')">
+            <Target action="show" conditionResult="true" option="sampPct2"/>
+            <Target action="hide" conditionResult="false" option="sampPct2"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition2Choice')">
+            <Target action="show" conditionResult="true" option="partition2Note"/>
+            <Target action="hide" conditionResult="false" option="partition2Note"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition3Choice')">
+            <Target action="show" conditionResult="true" option="partition3Note"/>
+            <Target action="hide" conditionResult="false" option="partition3Note"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition2Choice' &amp;&amp; $sampPct1 &lt; 1.0)">
+            <Target action="show" conditionResult="true" option="samppct1Note"/>
+            <Target action="hide" conditionResult="false" option="samppct1Note"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition3Choice' &amp;&amp; ($sampPct1 &lt; 1.0 || $sampPct2 &lt; 1.0))">
+            <Target action="show" conditionResult="true" option="samppct2Note"/>
+            <Target action="hide" conditionResult="false" option="samppct2Note"/>
+        </Dependency>
+        <!-- not yet used
+        <Dependency condition="($partitionVarType == 'charPartVarType')">
+            <Target option="charPartitionDataValue1" conditionResult="true"  action="show"/>
+            <Target option="charPartitionDataValue1" conditionResult="false" action="hide"/>
+        </Dependency>
+
+        <Dependency condition="($partitionVarType == 'charPartVarType' &amp;&amp; $nPartitions >= 2)">
+            <Target option="charPartitionDataValue2" conditionResult="true"  action="show"/>
+            <Target option="charPartitionDataValue2" conditionResult="false" action="hide"/>
+        </Dependency>
+        <Dependency condition="($partitionVarType == 'charPartVarType' &amp;&amp; $nPartitions >= 3)">
+            <Target option="charPartitionDataValue3" conditionResult="true"  action="show"/>
+            <Target option="charPartitionDataValue3" conditionResult="false" action="hide"/>
+        </Dependency>
+ 
+        <Dependency condition="($partitionVarType == 'numPartVarType')">
+            <Target option="numPartitionDataValue1" conditionResult="true"  action="show"/>
+            <Target option="numPartitionDataValue1" conditionResult="false" action="hide"/>
+        </Dependency>
+
+        <Dependency condition="($partitionVarType == 'numPartVarType' &amp;&amp; $nPartitions >= 2)">
+            <Target option="num3PartitionsDataValue2" conditionResult="true"  action="show"/>
+            <Target option="num3PartitionsDataValue2" conditionResult="false" action="hide"/>
+        </Dependency>
+        <Dependency condition="($partitionVarType == 'numPartVarType' &amp;&amp; $nPartitions >= 3)">
+            <Target option="num3PartitionsDataValue3" conditionResult="true"  action="show"/>
+            <Target option="num3PartitionsDataValue3" conditionResult="false" action="hide"/>
+        </Dependency>
+-->
+        <Dependency condition="($nPartitions == 'nPartition2Choice')">
+            <Target action="show" conditionResult="true" option="num2PartitionsDataValue2"/>
+            <Target action="hide" conditionResult="false" option="num2PartitionsDataValue2"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition3Choice')">
+            <Target action="show" conditionResult="true" option="num3PartitionsDataValue2"/>
+            <Target action="hide" conditionResult="false" option="num3PartitionsDataValue2"/>
+            <Target action="show" conditionResult="true" option="num3PartitionsDataValue3"/>
+            <Target action="hide" conditionResult="false" option="num3PartitionsDataValue3"/>
+        </Dependency>
+        <!--           
+        <Dependency condition="($showData == '1')">
+            <Target option="showDataCombo" conditionResult="true"  action="show"/>
+            <Target option="showDataCombo" conditionResult="false" action="hide"/>
+        </Dependency>
+        <Dependency condition="($showData == '1' &amp;&amp; $showDataCombo == 'showSubsetDataChoice')">
+            <Target option="subsetNobs" conditionResult="true"  action="show"/>
+            <Target option="subsetNobs" conditionResult="false" action="hide"/>
+        </Dependency>
+-->
+    </Dependencies>
+    <Requirements>
+        <Requirement condition="!($dataset.columnExists($partitionVarName))">
+            <Message nlsKey="partitionVarNameExistsinDatasetRequirementKey">The specified SAS variable name to hold the partition values is already in use in the data set.</Message>
+        </Requirement>
+        <!-- The sum of proportions must not exceed 1 -->
+        <Requirement condition="!(             $nPartitions == 'nPartition2Choice' &amp;&amp; ($MathTool.toDouble($sampPct1) > 100.0)             )">
+            <Message nlsKey="prop1RequirementKey">The sampling percentage for partition 1 must be less than 100.</Message>
+        </Requirement>
+        <Requirement
+                condition="!(             $nPartitions == 'nPartition3Choice' &amp;&amp;              ($MathTool.add($MathTool.toDouble($sampPct1),$MathTool.toDouble($sampPct2) ) >= 100.0))">
+            )"&gt;
+            <Message nlsKey="prop1and2SumRequirementKey">The sum of the sampling percentages for partitions 1 and 2 must be less than 100.</Message>
+        </Requirement>
+        <!-- not yet used        
+        <Requirement condition="!( 
+            $nPartitions == 'nPartition2Choice' &amp;&amp; 
+            (
+            ($partitionVarType == 'charPartVarType' &amp;&amp; 
+                ($charPartitionDataValue1 == $charPartitionDataValue2)
+            ) ||
+            ($partitionVarType == 'numPartVarType' &amp;&amp; 
+                ($numPartitionDataValue1 == $num3PartitionsDataValue2)
+            ) 
+            )
+            )">
+            <Message nlsKey="partition12UniqueValuesRequirementKey">The ID values for partitions 1 and 2 must be different.</Message>
+        </Requirement>
+        <Requirement condition="!( 
+            $nPartitions == 'nPartition3Choice' &amp;&amp; 
+            (
+            ($partitionVarType == 'charPartVarType' &amp;&amp; 
+                ($charPartitionDataValue1 == $charPartitionDataValue2 || 
+                $charPartitionDataValue1 == $charPartitionDataValue3 || 
+                $charPartitionDataValue2 == $charPartitionDataValue3)
+            ) ||
+            ($partitionVarType == 'numPartVarType' &amp;&amp; 
+                ($numPartitionDataValue1 == $num3PartitionsDataValue2 || 
+                $numPartitionDataValue1 == $num3PartitionsDataValue3 || 
+                $num3PartitionsDataValue2 == $num3PartitionsDataValue3)
+            )
+            )
+            )">
+            <Message nlsKey="partition123UniqueValuesRequirementKey">The ID values for partitions 1, 2, and 3 must be different.</Message>
+        </Requirement>
+-->
+        <Requirement condition="!(              $nPartitions == 'nPartition2Choice' &amp;&amp; ($numPartitionDataValue1 == 0)             )">
+            <Message nlsKey="partition1Not0RequirementKey">The ID value for partition 1 cannot be 0.</Message>
+        </Requirement>
+        <Requirement condition="!(              $nPartitions == 'nPartition2Choice' &amp;&amp; ($numPartitionDataValue1 == 0) || ($num2sPartitionsDataValue2 == 0)             )">
+            <Message nlsKey="partition1or2Not0RequirementKey">The ID values for partitions 1 and 2 must be different.</Message>
+        </Requirement>
+        <Requirement condition="!(              $nPartitions == 'nPartition3Choice' &amp;&amp; ($numPartitionDataValue1 == 0) || ($num3PartitionsDataValue2 == 0)             )">
+            <Message nlsKey="partition1or2Not0RequirementKey">The ID values for partitions 1 or 2 cannot be 0.</Message>
+        </Requirement>
+        <Requirement condition="!(              $nPartitions == 'nPartition3Choice' &amp;&amp;             (                  ($numPartitionDataValue1 == $num3PartitionsDataValue2) ||                 ($numPartitionDataValue1 == $num3PartitionsDataValue3) ||                 ($numPartitionDataValue2 == $num3PartitionsDataValue3)             )             )">
+            <Message nlsKey="partition12UniqueValuesRequirementKey">The ID values for partitions 1, 2, and 3 must be different.</Message>
+        </Requirement>
+        <Requirement condition="!($outputDSName &amp;&amp; $outputDSName != '' &amp;&amp;             ($outputDSName.indexOf('.') > 0 &amp;&amp;             $outputDSName.toUpperCase().substring(0,$outputDSName.indexOf('.')) == 'WORK'))">
+            <Message nlsKey="outputDSNameMsgKey">The partitioned data set must have a two-level name that includes a CAS engine libref.</Message>
+        </Requirement>
+    </Requirements>
+    <CodeTemplate><![CDATA[
+ods noproctitle;
+
+proc partition data=$dataset partind samppct=$sampPct1
+#if ($nPartitions == 'nPartition3Choice') samppct2=$sampPct2#end
+#if($useRandomSeed == 1) seed=$randomSeed#end
+#if ($ignoreTargetCase == 1) nonorm #end
+;
+
+#if ($dataset.getWhereClause() != '')
+   where $dataset.getWhereClause();
+#end
+
+#if ($samplingType=='stratifiedSamplingChoice')
+   #if ( $targetVariables.size() > 0 )   
+   by #foreach( $item in $targetVariables ) $item #end; 
+   #end
+#end
+
+   output out=$outputDSName
+#if (!$partitionVarName.equalsIgnoreCase('_PartInd_'))partindname=$CTMUtil.toSASName($partitionVarName)#end
+#if ($includeVars=='includeSelectedVars') copyvars=(
+   #foreach( $item in $copyVariables ) $item#end
+   )
+#end
+;
+run;
+
+#if ($nPartitions == 'nPartition2Choice' && !($numPartitionDataValue1 == 1 && $num2PartitionsDataValue2 == 0))
+data $outputDSName;
+   set $outputDSName;
+   #if ($partitionVarName.equalsIgnoreCase('_PartInd_'))
+      #if (!($numPartitionDataValue1 == 1))
+   if _PartInd_ = 1 then _PartInd_ = $numPartitionDataValue1;
+         #if (!($num2PartitionsDataValue2 == 0)) else#end
+      #end
+      #if (!($num2PartitionsDataValue2 == 0))
+   if _PartInd_ = 0 then _PartInd_ = $num2PartitionsDataValue2;
+      #end
+   #else   
+      #if (!($numPartitionDataValue1 == 1))
+   if $CTMUtil.toSASName($partitionVarName) = 1 then $CTMUtil.toSASName($partitionVarName) = $numPartitionDataValue1;
+         #if (!($num2PartitionsDataValue2 == 0)) else#end
+      #end
+      #if (!($num2PartitionsDataValue2 == 0))
+   if $CTMUtil.toSASName($partitionVarName) = 0 then $CTMUtil.toSASName($partitionVarName) = $num2PartitionsDataValue2;
+      #end
+   #end
+run;
+
+#elseif ($nPartitions == 'nPartition3Choice' && !($numPartitionDataValue1 == 1 && $num3PartitionsDataValue2 == 2 && $num3PartitionsDataValue3 == 0))
+data $outputDSName;
+   set $outputDSName;
+   #if ($partitionVarName.equalsIgnoreCase('_PartInd_'))
+      #if (!($numPartitionDataValue1 == 1))
+ if _PartInd_ = 1 then _PartInd_ = $numPartitionDataValue1;
+         #if (!($num3PartitionsDataValue2 == 2 && $num3PartitionsDataValue3 == 0)) else#end
+      #end
+      #if (!($num3PartitionsDataValue2 == 2))
+ if _PartInd_ = 2 then _PartInd_ = $num3PartitionsDataValue2;
+         #if (!($num3PartitionsDataValue3 == 0)) else#end
+      #end
+      #if (!($num3PartitionsDataValue3 == 0))
+ if _PartInd_ = 0 then _PartInd_ = $num3PartitionsDataValue3;
+      #end
+
+   #else
+      #if (!($numPartitionDataValue1 == 1))
+ if $CTMUtil.toSASName($partitionVarName) = 1 then $CTMUtil.toSASName($partitionVarName) = $numPartitionDataValue1;
+         #if (!($num3PartitionsDataValue2 == 2 && $num3PartitionsDataValue3 == 0)) else#end
+      #end
+      #if (!($num3PartitionsDataValue2 == 2))
+ if $CTMUtil.toSASName($partitionVarName) = 2 then $CTMUtil.toSASName($partitionVarName) = $num3PartitionsDataValue2;
+         #if (!($num3PartitionsDataValue3 == 0)) else#end
+      #end
+      #if (!($num3PartitionsDataValue3 == 0))
+ if $CTMUtil.toSASName($partitionVarName) = 0 then $CTMUtil.toSASName($partitionVarName) = $num3PartitionsDataValue3;
+      #end
+   
+   #end
+run;
+#end
+
+#if ($showData == '1')
+#if($showDataCombo == 'showSubsetDataChoice')
+#set( $finalTitle = $subsetTitle.replace("{1}", $outputDSName) )
+#end
+proc print data=$outputDSName#if($showDataCombo == 'showSubsetDataChoice')(obs=$subsetNobs)#end;
+title "#if($showDataCombo == 'showSubsetDataChoice')$finalTitle#{else}$outputDSName#end";
+run;
+#end
+]]></CodeTemplate>
+    
+
+<TemplateValues version="4.2">
+<![CDATA[
+{"randomSeedNote":"Specifying a random number seed may not replicate results in a distributed computing environment.","showData":"0","num3PartitionsDataValue2":"2","ignoreTargetCase":"","num3PartitionsDataValue3":"0","sampleByPct":"Percentage","sasOS":"Linux LIN X64 4.1.12-61.1.22.el7uek.x86_64","dataTab":"DATA","includeSelectedVars":"0","includeVars":"includeAllVars","charPartVarType":"0","showDataCombo":"showSubsetDataChoice","showAllDataChoice":"Show all output data","nPartition3Choice":"3","includeVarsInstruction":"Include variables from the input CAS table:","useRandomSeed":"1","nPartitions":"nPartition3Choice","simpleSamplingChoice":"0","charPartitionDataValue2":"Partition 2","charPartitionDataValue1":"Partition 1","num2PartitionsDataValue2":"0","randomSeed":"9878","sampPct2":"10","sampPct1":"30","methodsGroup":"METHODS","showDataGroup":"Show Output Data","targetVariables":"json:[{\"value\":\"Arrest\",\"type\":\"Char\",\"length\":5,\"format\":\"$5.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","outputDSName":"MYCAS.cwpart","numPartitionDataValue1":"1","numPartVarType":"1","partitionsGroup":"PARTITIONS","stratifiedSamplingChoice":"1","nPartition2Choice":"2","casOutputLibrefNote":"The following table must use a CAS engine libref:","partition2Note":"Partition 2 consists of the unsampled cases.","charPartitionDataValue3":"Partition 3","subsetNobs":"10","rolesGroup":"SAMPLING METHOD","includeAllVars":"1","partitionVarType":"numPartVarType","samplingType":"stratifiedSamplingChoice","numThreePartitionsDataValueNote":"ID value for partition 3: 0","partitionVarName":"_PartInd_","subsetTitle":"Subset of {1}","showSubsetDataChoice":"Show subset of output data","dataGroup":"DATA","samppct1Note":"The sampling percentage can range between 0 and 100.","sasVersion":"3.02","numTwoPartitionsDataValueNote":"ID value for partition 2: 0","outputGroup":"OUTPUT DATA","outputTab":"OUTPUT","optionsTab":"OPTIONS","samppct2Note":"The sampling percentages can range between 0 and 100.","copyVariables":"json:[{\"value\":\"Arrest\",\"type\":\"Char\",\"length\":5,\"format\":\"$5.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","dataset":{"librarytable":"MYCAS.CRIMECENSUS"},"partition3Note":"Partition 3 consists of the unsampled cases."}
+]]>
+</TemplateValues>
+</Task>

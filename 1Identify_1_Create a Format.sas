@@ -1,0 +1,30 @@
+proc format  casfmtlib="chicagofmts" sessref=casauto;
+    value $fbi 
+    '01A' = 'Homicide 1st & 2nd Degree'
+    '02' = 'Criminal Sexual Assault'
+    '03' = 'Robbery'
+    '04A' = 'Aggravated Assault'
+    '04B' = 'Aggravated Battery'
+    '05' = 'Burglary'
+    '06' = 'Larceny'
+    '07' = 'Motor Vehicle Theft'
+    '08A' = 'Simple Assault'
+    '08B' = 'Simple Battery'
+    '09' = 'Arson'
+    '10' = 'Forgery & Counterfeiting'
+    '11' = 'Fraud'
+    '12' = 'Embezzlement'
+    '13' = 'Stolen Property'
+    '14' = 'Vandalism'
+    '15' = 'Weapons Violation'
+    '16' = 'Prostitution'
+    '17' = 'Criminal Sexual Abuse'
+    '18' = 'Drug Abuse'
+    '19' = 'Gambling'
+    '20' = 'Offenses Against Family'
+    '22' = 'Liquor License'
+    '24' = 'Disorderly Conduct'
+    '26' = 'Misc Non-Index Offense'
+;
+
+run;
